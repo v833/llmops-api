@@ -1,0 +1,13 @@
+{
+  "powermode.enabled": true,
+  "powermode.combo.timerEnabled": "hide",
+  "powermode.combo.timeout": 0,
+  "powermode.combo.counterEnabled": "hide",
+  "files.exclude": {
+    "**/__pycache__": true,
+    "**/*.pyc": true,
+    "**/*.pyo": true,
+    "**/*.pyd": true
+  },
+  "explorer.excludeGitIgnore": true
+}
