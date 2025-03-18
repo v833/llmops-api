@@ -1,3 +1,4 @@
 Flask==3.1.0
 injector==0.22.0
 setuptools==56.0.0
+openai==1.66.3
