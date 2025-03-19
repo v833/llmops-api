@@ -1,12 +1,14 @@
 import os
 from openai import OpenAI
+from internal.exception.exception import FailException
 from internal.schema import CompletionReq
 from pkg.response import success_json, validate_error_json
 
 class AppHandler:
   """应用控制器"""
   def ping(self):
-    return success_json({"ping": "pong"})
+    raise FailException("ping")
+    # return success_json({"ping": "pong"})
 
   def completion(self):
     req = CompletionReq()
