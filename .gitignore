@@ -4,3 +4,4 @@ __pycache__/
 *$py.class
 .DS_Store
 llmops_api.egg-info
+.vscode
