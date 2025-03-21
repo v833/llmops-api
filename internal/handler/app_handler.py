@@ -23,6 +23,10 @@ class AppHandler:
   def get_app(self, id: uuid.UUID):
     app = self.app_service.get_app(id)
     return success_message(f"应用已经成功获取，名字是{app.name}")
+  
+  def get_all_app(self):
+    apps = self.app_service.get_all_app()
+    return success_message(f"应用已经成功获取，列表是{[(str(app.id), app.name) for app in apps]}")
 
   def update_app(self, id: uuid.UUID):
     app = self.app_service.update_app(id)

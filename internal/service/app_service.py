@@ -1,5 +1,6 @@
 import uuid
 from dataclasses import dataclass
+from typing import List
 
 from injector import inject
 
@@ -24,6 +25,10 @@ class AppService:
     def get_app(self, id: uuid.UUID) -> App:
         app = self.db.session.query(App).get(id)
         return app
+    
+    def get_all_app(self) -> List[App]:
+        apps = self.db.session.query(App).all()
+        return apps
 
     def update_app(self, id: uuid.UUID) -> App:
         with self.db.auto_commit():

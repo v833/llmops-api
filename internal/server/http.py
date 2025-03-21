@@ -1,14 +1,16 @@
 from flask import Flask, Response
-from flask.sansio.app import App
 from internal.router import Router
 from config import Config
 from internal.exception import CustomException
 from pkg.response import json,Response,HttpCode
 import os
 from pkg.sqlalchemy import SQLAlchemy
+from flask_migrate import Migrate
+
 
 class Http(Flask):
-  def __init__(self, *args,config:Config,db: SQLAlchemy, router:Router, **kwargs):
+  def __init__(self, *args,config:Config,db: SQLAlchemy, 
+               migrate: Migrate, router:Router, **kwargs):
     super().__init__(*args, **kwargs)
     
     if config:
@@ -18,8 +20,11 @@ class Http(Flask):
     
     db.init_app(self)
     
-    with self.app_context():
-      db.create_all()
+    # with self.app_context():
+      # db.drop_all()
+    #   db.create_all()
+    
+    migrate.init_app(self, db, directory="internal/migration")
     
     router.register_router(self)
     
