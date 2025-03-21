@@ -1,12 +1,14 @@
 from flask import Flask, Response
+from flask.sansio.app import App
 from internal.router import Router
 from config import Config
 from internal.exception import CustomException
 from pkg.response import json,Response,HttpCode
 import os
+from pkg.sqlalchemy import SQLAlchemy
 
 class Http(Flask):
-  def __init__(self, *args,config:Config, router:Router, **kwargs):
+  def __init__(self, *args,config:Config,db: SQLAlchemy, router:Router, **kwargs):
     super().__init__(*args, **kwargs)
     
     if config:
@@ -14,7 +16,13 @@ class Http(Flask):
     
     self.register_error_handler(Exception, self._register_error_handler)
     
+    db.init_app(self)
+    
+    with self.app_context():
+      db.create_all()
+    
     router.register_router(self)
+    
   
   def _register_error_handler(self, err: Exception):
     if isinstance(err, CustomException):

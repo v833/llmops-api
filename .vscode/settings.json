@@ -9,5 +9,17 @@
     "**/*.pyo": true,
     "**/*.pyd": true
   },
-  "explorer.excludeGitIgnore": true
+  "explorer.excludeGitIgnore": true,
+  "sqltools.connections": [
+    {
+      "previewLimit": 50,
+      "server": "localhost",
+      "port": 5432,
+      "driver": "PostgreSQL",
+      "name": "llmops",
+      "database": "llmops",
+      "username": "postgres",
+      "password": "123221"
+    }
+  ]
 }
