@@ -1,6 +1,8 @@
 import os
 from dataclasses import dataclass
-from openai import OpenAI
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_openai import ChatOpenAI
 from internal.exception.exception import FailException
 from internal.schema import CompletionReq
 from internal.service import AppService
@@ -46,19 +48,13 @@ class AppHandler:
     if not req.validate():
       return validate_error_json(req.errors)
     
-    client = OpenAI(api_key=os.getenv("OPENAI_API_KEY"), 
-                    base_url=os.getenv("OPENAI_API_BASE"))
-
-    completion = client.chat.completions.create(
-        model=os.getenv("OPENAI_MODEL"),
-        messages=[
-        {"role": "system", "content": "你是deepseek开发的聊天机器人, 请根据用户的问题给出准确的答案"},
-        {"role": "user", "content": req.query.data},
-    ],
-    stream=False
-    )
+    prompt = ChatPromptTemplate.from_template("{query}")
     
-    content = completion.choices[0].message.content
+    llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"))
+    
+    ai_message = llm.invoke(prompt.invoke({"query": req.query.data}))
+    
+    print(ai_message.content)
 
-    return success_message(content)
+    return success_message({"content": ai_message.content})
 
