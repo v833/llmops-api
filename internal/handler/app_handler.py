@@ -52,9 +52,11 @@ class AppHandler:
     
     llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"))
     
-    ai_message = llm.invoke(prompt.invoke({"query": req.query.data}))
+    parser = StrOutputParser()
     
-    print(ai_message.content)
+    chain = prompt | llm | parser
+    
+    content = chain.invoke({"query": req.query.data})
 
-    return success_message({"content": ai_message.content})
+    return success_message({"content": content})
 
