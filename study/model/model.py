@@ -1,7 +1,6 @@
 from datetime import datetime
 import os
 
-import dotenv
 from langchain_core.prompts import ChatPromptTemplate
 from langchain_openai import ChatOpenAI
 
@@ -14,7 +13,7 @@ prompt = ChatPromptTemplate.from_messages([
 ]).partial(now=datetime.now())
 
 # 2.创建大语言模型
-llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"))
+llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
 
 ai_message = llm.invoke(prompt.invoke({"query": "现在是几点，请讲一个程序员的冷笑话"}))
 

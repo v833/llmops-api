@@ -42,7 +42,7 @@ class AppHandler:
     raise FailException("ping")
     # return success_message({"ping": "pong"})
 
-  def completion(self):
+  def debug(self, app_id: uuid.UUID):
     req = CompletionReq()
     
     if not req.validate():
@@ -50,7 +50,7 @@ class AppHandler:
     
     prompt = ChatPromptTemplate.from_template("{query}")
     
-    llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"))
+    llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
     
     parser = StrOutputParser()
     

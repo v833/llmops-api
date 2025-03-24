@@ -10,7 +10,7 @@ def retrieval(query:str):
   return '我是wang'
 
 
-llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"))
+llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
 
 parser = StrOutputParser()
 
