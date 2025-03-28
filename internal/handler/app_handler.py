@@ -6,7 +6,7 @@ from langchain_openai import ChatOpenAI
 from internal.exception.exception import FailException
 from internal.schema import CompletionReq
 from internal.service import AppService
-from pkg.response import success_message, validate_error_json
+from pkg.response import success_message, validate_error_json, success_json
 from injector import inject
 import uuid
 
@@ -58,5 +58,5 @@ class AppHandler:
     
     content = chain.invoke({"query": req.query.data})
 
-    return success_message({"content": content})
+    return success_json({"content": content})
 

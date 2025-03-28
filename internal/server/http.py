@@ -6,6 +6,7 @@ from pkg.response import json,Response,HttpCode
 import os
 from pkg.sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 
 class Http(Flask):
@@ -13,20 +14,30 @@ class Http(Flask):
                migrate: Migrate, router:Router, **kwargs):
     super().__init__(*args, **kwargs)
     
-    if config:
+    if config:  
       self.config.from_object(config)
     
     self.register_error_handler(Exception, self._register_error_handler)
     
     db.init_app(self)
+
+    
     
     # with self.app_context():
       # db.drop_all()
     #   db.create_all()
     
     migrate.init_app(self, db, directory="internal/migration")
+
+    CORS(self, resources={
+            r"/*": {
+                "origins": "*",
+                "supports_credentials": True,
+            }
+        })
     
     router.register_router(self)
+  
     
   
   def _register_error_handler(self, err: Exception):
