@@ -39,7 +39,6 @@ class Http(Flask):
     router.register_router(self)
   
     
-  
   def _register_error_handler(self, err: Exception):
     if isinstance(err, CustomException):
       return json(Response(code=err.code, message=err.message, data=err.data if err.data is not None else {}))

@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 from flask import Flask, Blueprint
 from injector import inject
-
+    
 from internal.handler import AppHandler
 
 

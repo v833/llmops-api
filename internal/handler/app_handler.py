@@ -1,13 +1,17 @@
 import os
 from dataclasses import dataclass
 from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
+from langchain_community.chat_message_histories import FileChatMessageHistory
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_openai import ChatOpenAI
 from internal.exception.exception import FailException
 from internal.schema import CompletionReq
 from internal.service import AppService
 from pkg.response import success_message, validate_error_json, success_json
 from injector import inject
+from operator import itemgetter
+from langchain.memory import ConversationBufferWindowMemory
 import uuid
 
 @inject
@@ -48,15 +52,35 @@ class AppHandler:
     if not req.validate():
       return validate_error_json(req.errors)
     
-    prompt = ChatPromptTemplate.from_template("{query}")
+    prompt = ChatPromptTemplate.from_messages(
+      [
+        ('system', '你是一个AI助手'),
+        MessagesPlaceholder('history'),
+        ('human', '{query}')
+      ]
+    )
+    
+    memory = ConversationBufferWindowMemory(
+      k=3,
+      return_messages=True,
+      output_key='output',
+      input_key='query',
+      chat_memory=FileChatMessageHistory('./storage/memory/chat_history.txt'),
+    )
     
     llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
     
     parser = StrOutputParser()
     
-    chain = prompt | llm | parser
+    chain = RunnablePassthrough.assign(
+        history=RunnableLambda(memory.load_memory_variables) | itemgetter('history')
+      ) | prompt | llm | parser
     
-    content = chain.invoke({"query": req.query.data})
+    chain_input = {'query': req.query.data}
+    
+    content = chain.invoke(chain_input)
+    
+    memory.save_context(chain_input, {"output": content})
 
     return success_json({"content": content})
 
