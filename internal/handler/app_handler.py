@@ -13,6 +13,9 @@ from injector import inject
 from operator import itemgetter
 from langchain.memory import ConversationBufferWindowMemory
 import uuid
+from langchain_core.runnables import RunnableConfig
+from langchain_core.memory import BaseMemory
+from langchain_core.tracers.schemas import Run
 
 @inject
 @dataclass
@@ -45,6 +48,26 @@ class AppHandler:
   def ping(self):
     raise FailException("ping")
     # return success_message({"ping": "pong"})
+    
+  @classmethod
+  def _load_memory_variables(cls, inputs, config: RunnableConfig):
+    configurable = config.get("configurable", {})
+    configurable_memory = configurable.get("memory", None)
+    if configurable_memory is not None and isinstance(configurable_memory, BaseMemory):
+      return configurable_memory.load_memory_variables(inputs)
+    
+    return {
+      "history": []
+    }
+  
+  @classmethod
+  def _save_context(cls, run_obj: Run, config: RunnableConfig):
+    configurable = config.get("configurable", {})
+    configurable_memory = configurable.get("memory", None)
+    if configurable_memory is not None and isinstance(configurable_memory, BaseMemory):
+      return configurable_memory.save_context(run_obj.inputs, run_obj.outputs)
+    
+    return None
 
   def debug(self, app_id: uuid.UUID):
     req = CompletionReq()
@@ -72,15 +95,19 @@ class AppHandler:
     
     parser = StrOutputParser()
     
-    chain = RunnablePassthrough.assign(
-        history=RunnableLambda(memory.load_memory_variables) | itemgetter('history')
-      ) | prompt | llm | parser
+    chain = (RunnablePassthrough.assign(
+        history=RunnableLambda(self._load_memory_variables) | itemgetter('history')
+      ) | prompt | llm | parser).with_listeners(
+      on_end=self._save_context,
+    )
     
     chain_input = {'query': req.query.data}
     
-    content = chain.invoke(chain_input)
-    
-    memory.save_context(chain_input, {"output": content})
+    content = chain.invoke(chain_input, config={
+      "configurable": {
+        "memory": memory,
+      }
+    })
 
     return success_json({"content": content})
 
