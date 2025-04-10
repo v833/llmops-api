@@ -16,6 +16,7 @@ import uuid
 from langchain_core.runnables import RunnableConfig
 from langchain_core.memory import BaseMemory
 from langchain_core.tracers.schemas import Run
+from internal.service.vector_database_service import VectorDatabaseService
 
 @inject
 @dataclass
@@ -23,6 +24,7 @@ class AppHandler:
   """应用控制器"""
   
   app_service: AppService
+  vector_database_service: VectorDatabaseService
   
   def create_app(self):
     """调用服务创建新的APP记录"""
@@ -95,8 +97,12 @@ class AppHandler:
     
     parser = StrOutputParser()
     
+    retriever = self.vector_database_service.get_retriever() | self.vector_database_service.combine_documents
+        
+    
     chain = (RunnablePassthrough.assign(
-        history=RunnableLambda(self._load_memory_variables) | itemgetter('history')
+        history=RunnableLambda(self._load_memory_variables) | itemgetter('history'),
+        context=itemgetter("query") | retriever
       ) | prompt | llm | parser).with_listeners(
       on_end=self._save_context,
     )
