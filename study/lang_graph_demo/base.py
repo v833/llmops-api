@@ -75,7 +75,7 @@ graph_builder.add_node("llm", chatbot)
 graph_builder.add_node("tool_exector", tool_exector)
 
 graph_builder.set_entry_point("llm")
-graph_builder.add_conditional_edges("llm", route)
+graph_builder.add_edge("llm", route)
 graph_builder.add_edge("tool_exector", "llm")
 
 graph = graph_builder.compile()
