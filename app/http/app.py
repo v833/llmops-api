@@ -8,10 +8,13 @@ from flask_migrate import Migrate
 
 injector = Injector([ExtensionModule])
 
-app = Http(__name__,config=Config(),
-          db=injector.get(SQLAlchemy),
-          migrate=injector.get(Migrate),
-          router=injector.get(Router))
+app = Http(
+    __name__,
+    config=Config(),
+    db=injector.get(SQLAlchemy),
+    migrate=injector.get(Migrate),
+    router=injector.get(Router),
+)
 
-if __name__ == '__main__':
-  app.run(debug=True, port=5000)
+if __name__ == "__main__":
+    app.run(debug=True, port=5000)

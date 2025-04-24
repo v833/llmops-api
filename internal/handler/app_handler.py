@@ -5,6 +5,9 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_community.chat_message_histories import FileChatMessageHistory
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_openai import ChatOpenAI
+from internal.core.tools.builtin_tools.providers.builtin_provider_manager import (
+    BuiltinProviderManager,
+)
 from internal.exception.exception import FailException
 from internal.schema import CompletionReq
 from internal.service import AppService
@@ -18,102 +21,122 @@ from langchain_core.memory import BaseMemory
 from langchain_core.tracers.schemas import Run
 from internal.service.vector_database_service import VectorDatabaseService
 
+
 @inject
 @dataclass
 class AppHandler:
-  """应用控制器"""
-  
-  app_service: AppService
-  vector_database_service: VectorDatabaseService
-  
-  def create_app(self):
-    """调用服务创建新的APP记录"""
-    app = self.app_service.create_app()
-    return success_message(f"应用已经成功创建，id为{app.id}")
+    """应用控制器"""
 
-  def get_app(self, id: uuid.UUID):
-    app = self.app_service.get_app(id)
-    return success_message(f"应用已经成功获取，名字是{app.name}")
-  
-  def get_all_app(self):
-    apps = self.app_service.get_all_app()
-    return success_message(f"应用已经成功获取，列表是{[(str(app.id), app.name) for app in apps]}")
+    app_service: AppService
+    vector_database_service: VectorDatabaseService
+    provider_factory: BuiltinProviderManager
 
-  def update_app(self, id: uuid.UUID):
-    app = self.app_service.update_app(id)
-    return success_message(f"应用已经成功修改，修改的名字是:{app.name}")
+    def create_app(self):
+        """调用服务创建新的APP记录"""
+        app = self.app_service.create_app()
+        return success_message(f"应用已经成功创建，id为{app.id}")
 
-  def delete_app(self, id: uuid.UUID):
-    app = self.app_service.delete_app(id)
-    return success_message(f"应用已经成功删除，id为:{app.id}")
+    def get_app(self, id: uuid.UUID):
+        app = self.app_service.get_app(id)
+        return success_message(f"应用已经成功获取，名字是{app.name}")
 
-  def ping(self):
-    raise FailException("ping")
-    # return success_message({"ping": "pong"})
-    
-  @classmethod
-  def _load_memory_variables(cls, inputs, config: RunnableConfig):
-    configurable = config.get("configurable", {})
-    configurable_memory = configurable.get("memory", None)
-    if configurable_memory is not None and isinstance(configurable_memory, BaseMemory):
-      return configurable_memory.load_memory_variables(inputs)
-    
-    return {
-      "history": []
-    }
-  
-  @classmethod
-  def _save_context(cls, run_obj: Run, config: RunnableConfig):
-    configurable = config.get("configurable", {})
-    configurable_memory = configurable.get("memory", None)
-    if configurable_memory is not None and isinstance(configurable_memory, BaseMemory):
-      return configurable_memory.save_context(run_obj.inputs, run_obj.outputs)
-    
-    return None
+    def get_all_app(self):
+        apps = self.app_service.get_all_app()
+        return success_message(
+            f"应用已经成功获取，列表是{[(str(app.id), app.name) for app in apps]}"
+        )
 
-  def debug(self, app_id: uuid.UUID):
-    req = CompletionReq()
-    
-    if not req.validate():
-      return validate_error_json(req.errors)
-    
-    prompt = ChatPromptTemplate.from_messages(
-      [
-        ('system', '你是一个AI助手'),
-        MessagesPlaceholder('history'),
-        ('human', '{query}')
-      ]
-    )
-    
-    memory = ConversationBufferWindowMemory(
-      k=3,
-      return_messages=True,
-      output_key='output',
-      input_key='query',
-      chat_memory=FileChatMessageHistory('./storage/memory/chat_history.txt'),
-    )
-    
-    llm = ChatOpenAI(model=os.getenv("OPENAI_MODEL"), api_key=os.getenv("OPENAI_API_KEY"))
-    
-    parser = StrOutputParser()
-    
-    retriever = self.vector_database_service.get_retriever() | self.vector_database_service.combine_documents
-        
-    
-    chain = (RunnablePassthrough.assign(
-        history=RunnableLambda(self._load_memory_variables) | itemgetter('history'),
-        context=itemgetter("query") | retriever
-      ) | prompt | llm | parser).with_listeners(
-      on_end=self._save_context,
-    )
-    
-    chain_input = {'query': req.query.data}
-    
-    content = chain.invoke(chain_input, config={
-      "configurable": {
-        "memory": memory,
-      }
-    })
+    def update_app(self, id: uuid.UUID):
+        app = self.app_service.update_app(id)
+        return success_message(f"应用已经成功修改，修改的名字是:{app.name}")
 
-    return success_json({"content": content})
+    def delete_app(self, id: uuid.UUID):
+        app = self.app_service.delete_app(id)
+        return success_message(f"应用已经成功删除，id为:{app.id}")
 
+    def ping(self):
+        duckduckgo = self.provider_factory.get_provider("duckduckgo")
+        duckduckgo_search = duckduckgo.get_tool_entity("duckduckgo_search")
+        print("duckduckgo_search:", duckduckgo_search)
+        return success_message(str(duckduckgo_search))
+
+    @classmethod
+    def _load_memory_variables(cls, inputs, config: RunnableConfig):
+        configurable = config.get("configurable", {})
+        configurable_memory = configurable.get("memory", None)
+        if configurable_memory is not None and isinstance(
+            configurable_memory, BaseMemory
+        ):
+            return configurable_memory.load_memory_variables(inputs)
+
+        return {"history": []}
+
+    @classmethod
+    def _save_context(cls, run_obj: Run, config: RunnableConfig):
+        configurable = config.get("configurable", {})
+        configurable_memory = configurable.get("memory", None)
+        if configurable_memory is not None and isinstance(
+            configurable_memory, BaseMemory
+        ):
+            return configurable_memory.save_context(run_obj.inputs, run_obj.outputs)
+
+        return None
+
+    def debug(self, app_id: uuid.UUID):
+        req = CompletionReq()
+
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        prompt = ChatPromptTemplate.from_messages(
+            [
+                ("system", "你是一个AI助手"),
+                MessagesPlaceholder("history"),
+                ("human", "{query}"),
+            ]
+        )
+
+        memory = ConversationBufferWindowMemory(
+            k=3,
+            return_messages=True,
+            output_key="output",
+            input_key="query",
+            chat_memory=FileChatMessageHistory("./storage/memory/chat_history.txt"),
+        )
+
+        llm = ChatOpenAI(
+            model=os.getenv("OPENAI_MODEL"), api_key=os.getenv("OPENAI_API_KEY")
+        )
+
+        parser = StrOutputParser()
+
+        retriever = (
+            self.vector_database_service.get_retriever()
+            | self.vector_database_service.combine_documents
+        )
+
+        chain = (
+            RunnablePassthrough.assign(
+                history=RunnableLambda(self._load_memory_variables)
+                | itemgetter("history"),
+                context=itemgetter("query") | retriever,
+            )
+            | prompt
+            | llm
+            | parser
+        ).with_listeners(
+            on_end=self._save_context,
+        )
+
+        chain_input = {"query": req.query.data}
+
+        content = chain.invoke(
+            chain_input,
+            config={
+                "configurable": {
+                    "memory": memory,
+                }
+            },
+        )
+
+        return success_json({"content": content})

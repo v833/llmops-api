@@ -1,15 +1,8 @@
-#!/usr/bin/env python
-# -*- coding: utf-8 -*-
-"""
-@Time    : 2024/3/29 15:01
-@Author  : thezehui@gmail.com
-@File    : router.py
-"""
 from dataclasses import dataclass
 
 from flask import Flask, Blueprint
 from injector import inject
-    
+
 from internal.handler import AppHandler
 
 
@@ -17,6 +10,7 @@ from internal.handler import AppHandler
 @dataclass
 class Router:
     """路由"""
+
     app_handler: AppHandler
 
     def register_router(self, app: Flask):
@@ -26,7 +20,11 @@ class Router:
 
         # 2.将url与对应的控制器方法做绑定
         bp.add_url_rule("/ping", view_func=self.app_handler.ping)
-        bp.add_url_rule("/apps/<uuid:app_id>/debug", methods=["POST", "OPTIONS"], view_func=self.app_handler.debug)
+        bp.add_url_rule(
+            "/apps/<uuid:app_id>/debug",
+            methods=["POST", "OPTIONS"],
+            view_func=self.app_handler.debug,
+        )
         # bp.add_url_rule("/app", methods=["POST", "OPTIONS"], view_func=self.app_handler.create_app)
         # bp.add_url_rule("/app", methods=["GET"], view_func=self.app_handler.get_all_app)
         # bp.add_url_rule("/app/<uuid:id>", view_func=self.app_handler.get_app)
