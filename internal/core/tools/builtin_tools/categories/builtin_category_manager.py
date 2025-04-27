@@ -14,7 +14,7 @@ from internal.exception import NotFoundException
 class BuiltinCategoryManager(BaseModel):
     """内置的工具分类管理器"""
 
-    category_map: dict[str, Any] = Field(default_factory=dict)
+    category_map: dict[str, Any] = {}
 
     def __init__(self, **kwargs):
         """分类管理器初始化"""

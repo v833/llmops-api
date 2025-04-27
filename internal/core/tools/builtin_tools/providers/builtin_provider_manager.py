@@ -22,7 +22,7 @@ class BuiltinProviderManager:
         """根据服务提供商的名字，来获取到该服务提供商的对象"""
         return self.provider_map.get(provider_name)
 
-    def get_proivders(self) -> List[Provider]:
+    def get_providers(self) -> List[Provider]:
         """获取所有的服务提供商对象"""
         return list(self.provider_map.values())
 

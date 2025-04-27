@@ -5,10 +5,6 @@ from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_community.chat_message_histories import FileChatMessageHistory
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_openai import ChatOpenAI
-from internal.core.tools.builtin_tools.providers.builtin_provider_manager import (
-    BuiltinProviderManager,
-)
-from internal.exception.exception import FailException
 from internal.schema import CompletionReq
 from internal.service import AppService
 from pkg.response import success_message, validate_error_json, success_json
@@ -29,7 +25,6 @@ class AppHandler:
 
     app_service: AppService
     vector_database_service: VectorDatabaseService
-    provider_factory: BuiltinProviderManager
 
     def create_app(self):
         """调用服务创建新的APP记录"""
@@ -55,10 +50,7 @@ class AppHandler:
         return success_message(f"应用已经成功删除，id为:{app.id}")
 
     def ping(self):
-        duckduckgo = self.provider_factory.get_provider("duckduckgo")
-        duckduckgo_search = duckduckgo.get_tool_entity("duckduckgo_search")
-        print("duckduckgo_search:", duckduckgo_search)
-        return success_message(str(duckduckgo_search))
+        return success_message()
 
     @classmethod
     def _load_memory_variables(cls, inputs, config: RunnableConfig):
