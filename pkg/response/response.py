@@ -9,6 +9,7 @@ from .http_code import HttpCode
 @dataclass
 class Response:
     """基础HTTP接口响应格式"""
+
     code: HttpCode = HttpCode.SUCCESS
     message: str = ""
     data: Any = field(default_factory=dict)
@@ -19,9 +20,9 @@ def json(data: Response = None):
     return jsonify(data), 200
 
 
-def success_json(data: Any = None):
+def success_json(data: Any = None, message=""):
     """成功数据响应"""
-    return json(Response(code=HttpCode.SUCCESS, message="", data=data))
+    return json(Response(code=HttpCode.SUCCESS, message=message, data=data))
 
 
 def fail_json(data: Any = None):

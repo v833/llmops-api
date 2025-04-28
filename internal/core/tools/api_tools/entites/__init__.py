@@ -1,3 +1,3 @@
-from .openai_schema import OpenAPISchema, ParameterIn, ParameterType
+from .openapi_schema import OpenAPISchema, ParameterIn, ParameterType
 
 __all__ = ["OpenAPISchema", "ParameterIn", "ParameterType"]
