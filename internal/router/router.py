@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from flask import Flask, Blueprint
 from injector import inject
 
-from internal.handler import AppHandler, BuiltinToolHandler
+from internal.handler import AppHandler, BuiltinToolHandler, ApiToolHandler
 
 
 @inject
@@ -13,6 +13,7 @@ class Router:
 
     app_handler: AppHandler
     builtin_tool_handler: BuiltinToolHandler
+    api_tool_handler: ApiToolHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -67,11 +68,11 @@ class Router:
         #     "/api-tools",
         #     view_func=self.api_tool_handler.get_api_tool_providers_with_page,
         # )
-        # bp.add_url_rule(
-        #     "/api-tools/validate-openapi-schema",
-        #     methods=["POST"],
-        #     view_func=self.api_tool_handler.validate_openapi_schema,
-        # )
+        bp.add_url_rule(
+            "/api-tools/validate-openapi-schema",
+            methods=["POST"],
+            view_func=self.api_tool_handler.validate_openapi_schema,
+        )
         # bp.add_url_rule(
         #     "/api-tools",
         #     methods=["POST"],
