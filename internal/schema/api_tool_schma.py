@@ -1,7 +1,10 @@
 from flask_wtf import FlaskForm
+from langchain_core.load.dump import default
 from wtforms import StringField, ValidationError
 from wtforms.validators import DataRequired, URL, Length
 from .schema import ListField
+from marshmallow import Schema, fields, pre_dump
+from internal.model.api_tool import ApiToolProvider
 
 
 class ValidateOpenAPISchemaReq(FlaskForm):
@@ -45,3 +48,25 @@ class CreateApiToolReq(FlaskForm):
                 raise ValidationError(
                     "headers里的每一个元素都必须包含key/value两个属性，不允许有其他属性"
                 )
+
+
+class GetApiToolProviderResp(Schema):
+    """获取自定义API工具提供者信息响应"""
+
+    id = fields.UUID()
+    name = fields.String()
+    icon = fields.String()
+    openapi_schema = fields.String()
+    headers = fields.List(fields.Dict, default=[])
+    create_at = fields.Integer(default=0)
+
+    @pre_dump
+    def process_data(self, data: ApiToolProvider, **kwargs):
+        return {
+            "id": data.id,
+            "name": data.name,
+            "icon": data.icon,
+            "openapi_schema": data.openapi_schema,
+            "headers": data.headers,
+            "created_at": int(data.created_at.timestamp()),
+        }

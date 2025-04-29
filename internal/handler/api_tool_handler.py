@@ -1,8 +1,13 @@
+from uuid import UUID
 from injector import inject
 from dataclasses import dataclass
 from internal.core.tools.api_tools.entites import openapi_schema
 from internal.service import ApiToolService
-from internal.schema.api_tool_schma import ValidateOpenAPISchemaReq, CreateApiToolReq
+from internal.schema.api_tool_schma import (
+    ValidateOpenAPISchemaReq,
+    CreateApiToolReq,
+    GetApiToolProviderResp,
+)
 from pkg.response import validate_error_json, success_message, success_json
 
 
@@ -22,6 +27,13 @@ class ApiToolHandler:
         self.api_tool_service.create_api_tool(req)
 
         return success_message("创建自定义API插件成功")
+
+    def get_api_tool_provider(self, provider_id: UUID):
+        api_tool_provider = self.api_tool_service.get_api_tool_provider(provider_id)
+
+        resp = GetApiToolProviderResp()
+
+        return success_json(resp.dump(api_tool_provider))
 
     def validate_openapi_schema(self):
         """验证OpenAI API插件规范"""

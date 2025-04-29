@@ -2,7 +2,8 @@ from injector import inject
 from dataclasses import dataclass
 import json
 from internal.core.tools.api_tools.entites.openapi_schema import OpenAPISchema
-from internal.exception import ValidateErrorException
+from internal.exception import ValidateErrorException, NotFoundException
+from uuid import UUID
 from internal.model import ApiToolProvider, ApiTool
 from internal.schema.api_tool_schma import CreateApiToolReq
 from .base_service import BaseService
@@ -15,6 +16,20 @@ class ApiToolService(BaseService):
     """自定义API插件服务"""
 
     db: SQLAlchemy
+
+    def get_api_tool_provider(self, provider_id: UUID):
+        """根据传递的provider_id获取API工具提供者信息"""
+        # todo:等待授权认证模块完成进行切换调整
+        account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+
+        # 1.查询数据库获取对应的数据
+        api_tool_provider = self.get(ApiToolProvider, provider_id)
+
+        # 2.检验数据是否为空，并且判断该数据是否属于当前账号
+        if api_tool_provider is None or str(api_tool_provider.account_id) != account_id:
+            raise NotFoundException("该工具提供者不存在")
+
+        return api_tool_provider
 
     def create_api_tool(self, req: CreateApiToolReq):
         """创建自定义API工具"""

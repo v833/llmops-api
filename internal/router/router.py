@@ -66,7 +66,7 @@ class Router:
         # 4.自定义API插件模块
         # bp.add_url_rule(
         #     "/api-tools",
-        #     view_func=self.api_tool_handler.get_api_tool_providers_with_page,
+        #     view_func=self.api_tool_handler.get_api_tool_provider,
         # )
         bp.add_url_rule(
             "/api-tools/validate-openapi-schema",
@@ -78,10 +78,10 @@ class Router:
             methods=["POST"],
             view_func=self.api_tool_handler.create_api_tool_provider,
         )
-        # bp.add_url_rule(
-        #     "/api-tools/<uuid:provider_id>",
-        #     view_func=self.api_tool_handler.get_api_tool_provider,
-        # )
+        bp.add_url_rule(
+            "/api-tools/<uuid:provider_id>",
+            view_func=self.api_tool_handler.get_api_tool_provider,
+        )
         # bp.add_url_rule(
         #     "/api-tools/<uuid:provider_id>",
         #     methods=["POST"],
