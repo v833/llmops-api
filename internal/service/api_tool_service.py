@@ -5,9 +5,14 @@ from internal.core.tools.api_tools.entites.openapi_schema import OpenAPISchema
 from internal.exception import ValidateErrorException, NotFoundException
 from uuid import UUID
 from internal.model import ApiToolProvider, ApiTool
-from internal.schema.api_tool_schma import CreateApiToolReq
+from internal.schema.api_tool_schma import (
+    CreateApiToolReq,
+    GetApiToolProvidersWithPageReq,
+)
+from sqlalchemy import desc
 from .base_service import BaseService
 from pkg.sqlalchemy import SQLAlchemy
+from pkg.paginator import Paginator
 
 account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
 
@@ -36,6 +41,25 @@ class ApiToolService(BaseService):
             raise NotFoundException("该工具不存在")
 
         return api_tool
+
+    def get_api_tool_providers_with_page(self, req: GetApiToolProvidersWithPageReq):
+        """获取自定义API工具服务提供者分页列表数据"""
+        # 1.构建分页查询器
+        paginator = Paginator(db=self.db, req=req)
+
+        # 2.构建筛选器
+        filters = [ApiToolProvider.account_id == account_id]
+        if req.search_word.data:
+            filters.append(ApiToolProvider.name.ilike(f"%{req.search_word.data}%"))
+
+        # 3.执行分页并获取数据
+        api_tool_providers = paginator.paginate(
+            self.db.session.query(ApiToolProvider)
+            .filter(*filters)
+            .order_by(desc("created_at"))
+        )
+
+        return api_tool_providers, paginator
 
     def get_api_tool_provider(self, provider_id: UUID):
         """根据传递的provider_id获取API工具提供者信息"""
@@ -89,6 +113,25 @@ class ApiToolService(BaseService):
                     parameters=method_item.get("parameters", []),
                 )
         pass
+
+    def delete_api_tool_provider(self, provider_id: UUID):
+        """根据传递的provider_id删除对应的工具提供商+工具的所有信息"""
+
+        # 1.先查找数据，检测下provider_id对应的数据是否存在，权限是否正确
+        api_tool_provider = self.get(ApiToolProvider, provider_id)
+        if api_tool_provider is None or str(api_tool_provider.account_id) != account_id:
+            raise NotFoundException("该工具提供者不存在")
+
+        # 2.开启数据库的自动提交
+        with self.db.auto_commit():
+            # 3.先来删除提供者对应的工具信息
+            self.db.session.query(ApiTool).filter(
+                ApiTool.provider_id == provider_id,
+                ApiTool.account_id == account_id,
+            ).delete()
+
+            # 4.删除服务提供者
+            self.db.session.delete(api_tool_provider)
 
     @classmethod
     def parse_openapi_schema(cls, openapi_schema_str: str) -> OpenAPISchema:

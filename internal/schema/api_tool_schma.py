@@ -1,10 +1,11 @@
 from flask_wtf import FlaskForm
 from langchain_core.load.dump import default
 from wtforms import StringField, ValidationError
-from wtforms.validators import DataRequired, URL, Length
+from wtforms.validators import DataRequired, URL, Length, Optional
 from .schema import ListField
 from marshmallow import Schema, fields, pre_dump
 from internal.model.api_tool import ApiToolProvider, ApiTool
+from pkg.paginator import PaginatorReq
 
 
 class ValidateOpenAPISchemaReq(FlaskForm):
@@ -68,6 +69,48 @@ class GetApiToolProviderResp(Schema):
             "icon": data.icon,
             "openapi_schema": data.openapi_schema,
             "headers": data.headers,
+            "created_at": int(data.created_at.timestamp()),
+        }
+
+
+class GetApiToolProvidersWithPageReq(PaginatorReq):
+    """获取API工具提供者分页列表请求"""
+
+    search_word = StringField("search_word", validators=[Optional()])
+
+
+class GetApiToolProvidersWithPageResp(Schema):
+    """获取API工具提供者分页列表数据响应"""
+
+    id = fields.UUID()
+    name = fields.String()
+    icon = fields.String()
+    description = fields.String()
+    headers = fields.List(fields.Dict, default=[])
+    tools = fields.List(fields.Dict, default=[])
+    created_at = fields.Integer(default=0)
+
+    @pre_dump
+    def process_data(self, data: ApiToolProvider, **kwargs):
+        tools = data.tools
+        return {
+            "id": data.id,
+            "name": data.name,
+            "icon": data.icon,
+            "description": data.description,
+            "headers": data.headers,
+            "tools": [
+                {
+                    "id": tool.id,
+                    "description": tool.description,
+                    "name": tool.name,
+                    "inputs": [
+                        {k: v for k, v in parameter.items() if k != "in"}
+                        for parameter in tool.parameters
+                    ],
+                }
+                for tool in tools
+            ],
             "created_at": int(data.created_at.timestamp()),
         }
 

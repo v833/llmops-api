@@ -8,8 +8,12 @@ from internal.schema.api_tool_schma import (
     CreateApiToolReq,
     GetApiToolProviderResp,
     GetApiToolResp,
+    GetApiToolProvidersWithPageReq,
+    GetApiToolProvidersWithPageResp,
 )
+from flask import request
 from pkg.response import validate_error_json, success_message, success_json
+from pkg.paginator import PageModel
 
 
 @inject
@@ -18,6 +22,22 @@ class ApiToolHandler:
     """自定义API插件处理器"""
 
     api_tool_service: ApiToolService
+
+    def get_api_tool_providers_with_page(self):
+        """获取API工具提供者列表信息，该接口支持分页"""
+        req = GetApiToolProvidersWithPageReq(request.args)
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        api_tool_providers, paginator = (
+            self.api_tool_service.get_api_tool_providers_with_page(req)
+        )
+
+        resp = GetApiToolProvidersWithPageResp(many=True)
+
+        return success_json(
+            PageModel(list=resp.dump(api_tool_providers), paginator=paginator)
+        )
 
     def create_api_tool_provider(self):
         """创建自定义API工具"""
@@ -30,6 +50,7 @@ class ApiToolHandler:
         return success_message("创建自定义API插件成功")
 
     def get_api_tool(self, provider_id: UUID, tool_name: str):
+
         api_tool = self.api_tool_service.get_api_tool(provider_id, tool_name)
 
         resp = GetApiToolResp()
@@ -42,6 +63,11 @@ class ApiToolHandler:
         resp = GetApiToolProviderResp()
 
         return success_json(resp.dump(api_tool_provider))
+
+    def delete_api_tool_provider(self, provider_id: UUID):
+        """删除自定义API工具"""
+        self.api_tool_service.delete_api_tool_provider(provider_id)
+        return success_message("删除自定义API插件成功")
 
     def validate_openapi_schema(self):
         """验证OpenAI API插件规范"""
