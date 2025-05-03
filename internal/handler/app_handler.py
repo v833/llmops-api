@@ -7,6 +7,7 @@ from langchain_core.runnables import RunnablePassthrough, RunnableLambda
 from langchain_openai import ChatOpenAI
 from internal.schema import CompletionReq
 from internal.service import AppService
+from internal.service.api_tool_service import ApiToolService
 from pkg.response import success_message, validate_error_json, success_json
 from injector import inject
 from operator import itemgetter
@@ -24,6 +25,7 @@ class AppHandler:
     """应用控制器"""
 
     app_service: AppService
+    api_tool_service: ApiToolService
     vector_database_service: VectorDatabaseService
 
     def create_app(self):
@@ -48,9 +50,6 @@ class AppHandler:
     def delete_app(self, id: uuid.UUID):
         app = self.app_service.delete_app(id)
         return success_message(f"应用已经成功删除，id为:{app.id}")
-
-    def ping(self):
-        return success_message()
 
     @classmethod
     def _load_memory_variables(cls, inputs, config: RunnableConfig):
@@ -132,3 +131,6 @@ class AppHandler:
         )
 
         return success_json({"content": content})
+
+    def ping(self):
+        return self.api_tool_service.api_tool_invoke()

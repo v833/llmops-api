@@ -2,6 +2,9 @@ from injector import inject
 from dataclasses import dataclass
 import json
 from internal.core.tools.api_tools.entites.openapi_schema import OpenAPISchema
+from internal.core.tools.api_tools.providers.api_provider_manager import (
+    ApiProviderManager,
+)
 from internal.exception import ValidateErrorException, NotFoundException
 from uuid import UUID
 from internal.model import ApiToolProvider, ApiTool
@@ -24,6 +27,7 @@ class ApiToolService(BaseService):
     """自定义API插件服务"""
 
     db: SQLAlchemy
+    api_provider_manager: ApiProviderManager
 
     def get_api_tool(self, provider_id: UUID, tool_name: str):
         """根据传递的provider_id+tool_name获取对应工具的参数详情信息"""
@@ -186,6 +190,34 @@ class ApiToolService(BaseService):
                     method=method,
                     parameters=method_item.get("parameters", []),
                 )
+
+    def api_tool_invoke(self):
+        provider_id = "634fdfb2-9614-4138-97b4-c1040d1c4ab4"
+        tool_name = "YoudaoSuggest"
+        api_tool = (
+            self.db.session.query(ApiTool)
+            .filter(
+                ApiTool.provider_id == provider_id,
+                ApiTool.name == tool_name,
+            )
+            .one_or_none()
+        )
+        api_tool_provider = api_tool.provider
+
+        from internal.core.tools.api_tools.entites.tool_entity import ToolEntity
+
+        tool = self.api_provider_manager.get_tool(
+            ToolEntity(
+                id=provider_id,
+                name=tool_name,
+                url=api_tool.url,
+                method=api_tool.method,
+                description=api_tool.description,
+                headers=api_tool_provider.headers,
+                parameters=api_tool.parameters,
+            )
+        )
+        return tool.invoke({"q": "love", "doctype": "json"})
 
     @classmethod
     def parse_openapi_schema(cls, openapi_schema_str: str) -> OpenAPISchema:
