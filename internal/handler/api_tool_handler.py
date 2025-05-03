@@ -7,6 +7,7 @@ from internal.schema.api_tool_schma import (
     ValidateOpenAPISchemaReq,
     CreateApiToolReq,
     GetApiToolProviderResp,
+    GetApiToolResp,
 )
 from pkg.response import validate_error_json, success_message, success_json
 
@@ -27,6 +28,13 @@ class ApiToolHandler:
         self.api_tool_service.create_api_tool(req)
 
         return success_message("创建自定义API插件成功")
+
+    def get_api_tool(self, provider_id: UUID, tool_name: str):
+        api_tool = self.api_tool_service.get_api_tool(provider_id, tool_name)
+
+        resp = GetApiToolResp()
+
+        return success_json(resp.dump(api_tool))
 
     def get_api_tool_provider(self, provider_id: UUID):
         api_tool_provider = self.api_tool_service.get_api_tool_provider(provider_id)
