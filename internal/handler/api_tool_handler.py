@@ -4,6 +4,7 @@ from dataclasses import dataclass
 from internal.core.tools.api_tools.entites import openapi_schema
 from internal.service import ApiToolService
 from internal.schema.api_tool_schma import (
+    UpdateApiToolProviderReq,
     ValidateOpenAPISchemaReq,
     CreateApiToolReq,
     GetApiToolProviderResp,
@@ -48,6 +49,15 @@ class ApiToolHandler:
         self.api_tool_service.create_api_tool(req)
 
         return success_message("创建自定义API插件成功")
+
+    def update_api_tool_provider(self, provider_id: UUID):
+        req = UpdateApiToolProviderReq()
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        self.api_tool_service.update_api_tool_provider(provider_id, req)
+
+        return success_message("更新自定义API插件成功")
 
     def get_api_tool(self, provider_id: UUID, tool_name: str):
 

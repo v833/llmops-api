@@ -8,6 +8,7 @@ from internal.model import ApiToolProvider, ApiTool
 from internal.schema.api_tool_schma import (
     CreateApiToolReq,
     GetApiToolProvidersWithPageReq,
+    UpdateApiToolProviderReq,
 )
 from sqlalchemy import desc
 from .base_service import BaseService
@@ -132,6 +133,59 @@ class ApiToolService(BaseService):
 
             # 4.删除服务提供者
             self.db.session.delete(api_tool_provider)
+
+    def update_api_tool_provider(
+        self, provider_id: UUID, req: UpdateApiToolProviderReq
+    ):
+        """根据传递的provider_id更新对应的工具提供商+工具的所有信息"""
+        # 1.先查找数据，检测下provider_id对应的数据是否存在，权限是否正确
+        api_tool_provider = self.get(ApiToolProvider, provider_id)
+
+        if api_tool_provider is None or str(api_tool_provider.account_id) != account_id:
+            raise NotFoundException("该工具提供者不存在")
+
+        openapi_schema = self.parse_openapi_schema(req.openapi_schema.data)
+
+        check_api_tool_provider = (
+            self.db.session.query(ApiToolProvider)
+            .filter(
+                ApiToolProvider.account_id == account_id,
+                ApiToolProvider.name == req.name.data,
+                ApiToolProvider.id != provider_id,
+            )
+            .one_or_none()
+        )
+
+        if check_api_tool_provider:
+            raise ValidateErrorException(f"该工具提供者名字{req.name.data}已存在")
+
+        with self.db.auto_commit():
+            self.db.session.query(ApiTool).filter(
+                ApiTool.provider_id == provider_id,
+                ApiTool.account_id == account_id,
+            ).delete()
+
+        self.update(
+            api_tool_provider,
+            name=req.name.data,
+            icon=req.icon.data,
+            headers=req.headers.data,
+            openapi_schema=req.openapi_schema.data,
+        )
+
+        # 7.新增工具信息从而完成覆盖更新
+        for path, path_item in openapi_schema.paths.items():
+            for method, method_item in path_item.items():
+                self.create(
+                    ApiTool,
+                    account_id=account_id,
+                    provider_id=api_tool_provider.id,
+                    name=method_item.get("operationId"),
+                    description=method_item.get("description"),
+                    url=f"{openapi_schema.server}{path}",
+                    method=method,
+                    parameters=method_item.get("parameters", []),
+                )
 
     @classmethod
     def parse_openapi_schema(cls, openapi_schema_str: str) -> OpenAPISchema:
