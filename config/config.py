@@ -24,3 +24,13 @@ class Config:
         self.REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
         self.REDIS_DB = os.getenv("REDIS_DB", 0)
         self.REDIS_USE_SSL = _get_bool_env("REDIS_USE_SSL")
+
+        self.CELERY = {
+            "broker_url": f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{os.getenv('CELERY_BROKER_DB')}",
+            "result_backend": f"redis://{self.REDIS_HOST}:{self.REDIS_PORT}/{os.getenv('CELERY_RESULT_BACKEND_DB')}",
+            "task_ignore_result": _get_bool_env("CELERY_TASK_IGNORE_RESULT"),
+            "result_expires": os.getenv("CELERY_RESULT_EXPIRES"),
+            "broker_connection_retry_on_startup": os.getenv(
+                "CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP"
+            ),
+        }

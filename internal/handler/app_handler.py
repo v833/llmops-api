@@ -8,6 +8,7 @@ from langchain_openai import ChatOpenAI
 from internal.schema import CompletionReq
 from internal.service import AppService
 from internal.service.api_tool_service import ApiToolService
+from internal.task import demo_task
 from pkg.response import success_message, validate_error_json, success_json
 from injector import inject
 from operator import itemgetter
@@ -133,4 +134,6 @@ class AppHandler:
         return success_json({"content": content})
 
     def ping(self):
-        return self.api_tool_service.api_tool_invoke()
+        demo_task.delay(uuid.uuid4())
+
+        return success_message("pong")
