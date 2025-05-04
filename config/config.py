@@ -18,9 +18,9 @@ class Config:
         }
         self.SQLALCHEMY_ECHO = _get_bool_env("SQLALCHEMY_ECHO")
 
-        self.REDIS_HOST = os.getenv("REDIS_HOST")
-        self.REDIS_PORT = os.getenv("REDIS_PORT")
+        self.REDIS_HOST = os.getenv("REDIS_HOST", "localhost")
+        self.REDIS_PORT = os.getenv("REDIS_PORT", 6379)
         self.REDIS_USERNAME = os.getenv("REDIS_USERNAME")
         self.REDIS_PASSWORD = os.getenv("REDIS_PASSWORD")
-        self.REDIS_DB = os.getenv("REDIS_DB")
+        self.REDIS_DB = os.getenv("REDIS_DB", 0)
         self.REDIS_USE_SSL = _get_bool_env("REDIS_USE_SSL")

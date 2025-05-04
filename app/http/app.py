@@ -3,7 +3,7 @@ from internal.router import Router
 from injector import Injector
 from config import Config
 from pkg.sqlalchemy import SQLAlchemy
-from .module import ExtensionModule
+from module import ExtensionModule
 from flask_migrate import Migrate
 
 injector = Injector([ExtensionModule])

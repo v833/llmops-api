@@ -21,3 +21,9 @@ WHERE upload_file.id = %(pk_1)s::UUID
 [2025-05-04 11:40:31,661.661] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00015s] {'pk_1': UUID('72ed39f5-4312-4809-a8f7-55c3ea0a8867')}
 [2025-05-04 11:40:31,665.665] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
 [2025-05-04 11:40:31,666.666] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 11:40:31] "POST /upload-files/file HTTP/1.1" 200 -
+[2025-05-04 12:20:55,303.303] _internal.py -> _log line:97 [INFO]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[2025-05-04 12:20:55,304.304] _internal.py -> _log line:97 [INFO]: [33mPress CTRL+C to quit[0m
+[2025-05-04 12:20:55,305.305] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 12:20:57,276.276] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 12:20:57,290.290] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032

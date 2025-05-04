@@ -1,5 +1,6 @@
 import logging
 from flask import Flask, Response
+from internal.extension.redis_extension import redis_init_app
 from internal.router import Router
 from config import Config
 from internal.exception import CustomException
@@ -36,6 +37,7 @@ class Http(Flask):
 
         migrate.init_app(self, db, directory="internal/migration")
         logging_init_app(self)
+        redis_init_app(self)
 
         CORS(
             self,
