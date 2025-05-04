@@ -5,3 +5,6 @@ __pycache__/
 llmops_api.egg-info
 .vscode
 env
+internal/core/embeddings
+.env
+storage
