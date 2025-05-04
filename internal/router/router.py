@@ -140,6 +140,12 @@ class Router:
         #     view_func=self.dataset_handler.delete_dataset,
         # )
         bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/hit",
+            methods=["POST"],
+            view_func=self.dataset_handler.hit,
+        )
+
+        bp.add_url_rule(
             "/datasets/<uuid:dataset_id>/documents",
             view_func=self.document_handler.get_documents_with_page,
         )
@@ -151,6 +157,11 @@ class Router:
         bp.add_url_rule(
             "/datasets/<uuid:dataset_id>/documents/<uuid:document_id>",
             view_func=self.document_handler.get_document,
+        )
+
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/documents/batch/<string:batch>",
+            view_func=self.document_handler.get_documents_status,
         )
 
         # 在应用上去注册蓝图

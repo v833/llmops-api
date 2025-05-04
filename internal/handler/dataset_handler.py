@@ -13,7 +13,7 @@ from internal.service.jieba_service import JiebaService
 from pkg.paginator import PageModel
 from flask import request
 from uuid import UUID
-from internal.service import DatasetService
+from internal.service import DatasetService, VectorDatabaseService
 from pkg.response import validate_error_json, success_message, success_json
 from pkg.sqlalchemy.sqlalchemy import SQLAlchemy
 from internal.model import UploadFile
@@ -28,19 +28,24 @@ class DatasetHandler:
     embeddings_server: EmbeddingsService
     jieba_service: JiebaService
     file_extractor: FileExtractor
+    vector_database_service: VectorDatabaseService
+
+    def hit(self, dataset_id: UUID):
+        """根据传递的知识库id+检索参数执行召回测试"""
+        pass
 
     def embeddings_query(self):
-        upload_file = self.db.session.query(UploadFile).get(
-            "94acfe76-bbad-4d4c-9751-bfcd36bca124"
-        )
-        content = self.file_extractor.load(upload_file, True)
-        return success_json({"content": content})
-        # query = request.args.get("query")
-        # vectors = self.embeddings_server.embeddings.embed_query(query)
-        # return success_json({"vectors": vectors})
+        # upload_file = self.db.session.query(UploadFile).get(
+        #     "94acfe76-bbad-4d4c-9751-bfcd36bca124"
+        # )
+        # content = self.file_extractor.load(upload_file, True)
+        # return success_json({"content": content})
+        query = request.args.get("query")
+        vectors = self.embeddings_server.embeddings.embed_query(query)
+        return success_json({"vectors": vectors})
 
-        keywords = self.jieba_service.extract_keywords(query)
-        return success_json({"keywords": keywords})
+        # keywords = self.jieba_service.extract_keywords(query)
+        # return success_json({"keywords": keywords})
 
     def create_dataset(self):
         """创建知识库"""

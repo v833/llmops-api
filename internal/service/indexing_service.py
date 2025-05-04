@@ -401,8 +401,8 @@ class IndexingService(BaseService):
 
         with ThreadPoolExecutor(max_workers=5) as executor:
             futures = []
-            for i in range(0, len(lc_segments), 10):
-                chunks = lc_segments[i : i + 10]
+            for i in range(0, len(lc_segments), 1):
+                chunks = lc_segments[i : i + 1]
                 ids = [chunk.metadata["node_id"] for chunk in chunks]
                 futures.append(
                     executor.submit(

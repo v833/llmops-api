@@ -3,7 +3,6 @@ import weaviate
 from injector import inject
 from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStoreRetriever
-from langchain_community.embeddings import QianfanEmbeddingsEndpoint
 from langchain_weaviate import WeaviateVectorStore
 from weaviate import WeaviateClient
 
