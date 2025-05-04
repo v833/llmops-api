@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from injector import inject
+from internal.core.file_extractor.file_extractor import FileExtractor
 from internal.schema.dataset_schema import (
     CreateDatasetReq,
     UpdateDatasetReq,
@@ -15,6 +16,7 @@ from uuid import UUID
 from internal.service import DatasetService
 from pkg.response import validate_error_json, success_message, success_json
 from pkg.sqlalchemy.sqlalchemy import SQLAlchemy
+from internal.model import UploadFile
 
 
 @inject
@@ -25,9 +27,15 @@ class DatasetHandler:
     db: SQLAlchemy
     embeddings_server: EmbeddingsService
     jieba_service: JiebaService
+    file_extractor: FileExtractor
 
     def embeddings_query(self):
-        query = request.args.get("query")
+        upload_file = self.db.session.query(UploadFile).get(
+            "94acfe76-bbad-4d4c-9751-bfcd36bca124"
+        )
+        content = self.file_extractor.load(upload_file, True)
+        return success_json({"content": content})
+        # query = request.args.get("query")
         # vectors = self.embeddings_server.embeddings.embed_query(query)
         # return success_json({"vectors": vectors})
 
