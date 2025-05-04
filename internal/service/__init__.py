@@ -5,6 +5,7 @@ from .api_tool_service import ApiToolService
 from .base_service import BaseService
 from .upload_file_service import UploadFileService
 from .cos_service import CosService
+from .dataset_service import DatasetService
 
 __all__ = [
     "BuiltinToolService",
@@ -14,4 +15,5 @@ __all__ = [
     "BaseService",
     "UploadFileService",
     "CosService",
+    "DatasetService",
 ]
