@@ -414,3 +414,259 @@ WHERE document.dataset_id = %(dataset_id_1)s::UUID
 [2025-05-04 18:32:09,810.810] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 18:32:09] "GET /datasets/embeddings?query=你好,%20你是? HTTP/1.1" 200 -
 [2025-05-04 18:32:51,625.625] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 18:32:51] "GET /datasets/embeddings?query=你好,%20我是wq,%20我喜欢打篮球,你呢? HTTP/1.1" 200 -
 [2025-05-04 18:34:09,679.679] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 18:34:09] "GET /datasets/embeddings?query=清晨的阳光透过薄雾洒在石板路上，空气中弥漫着泥土和青草的芬芳。街角的咖啡店刚开门，浓郁的香气吸引了几位早起的顾客。远处传来自行车的铃声，孩子们背着书包匆匆跑向学校。公园里，老人们打着太极，动作缓慢而有力。一只橘猫懒洋洋地趴在墙头，眯着眼打量过往的行人。城市的喧嚣尚未完全苏醒，此刻的宁静仿佛被按下了暂停键。 HTTP/1.1" 200 -
+[2025-05-04 19:30:48,136.136] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 19:30:48,154.154] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 19:30:57,838.838] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/document_service.py', reloading
+[2025-05-04 19:31:12,097.097] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 19:31:12,114.114] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 19:31:16,477.477] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/__init__.py', reloading
+[2025-05-04 20:03:13,727.727] _internal.py -> _log line:97 [INFO]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[2025-05-04 20:03:13,728.728] _internal.py -> _log line:97 [INFO]: [33mPress CTRL+C to quit[0m
+[2025-05-04 20:03:13,731.731] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 20:03:26,383.383] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 20:03:26,401.401] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 20:06:34,461.461] base.py -> _execute_context line:1843 [INFO]: select pg_catalog.version()
+[2025-05-04 20:06:34,462.462] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-04 20:06:34,465.465] base.py -> _execute_context line:1843 [INFO]: select current_schema()
+[2025-05-04 20:06:34,465.465] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-04 20:06:34,466.466] base.py -> _execute_context line:1843 [INFO]: show standard_conforming_strings
+[2025-05-04 20:06:34,467.467] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-04 20:06:34,467.467] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-04 20:06:34,471.471] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID ORDER BY dataset.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-04 20:06:34,471.471] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00026s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-04 20:06:34,488.488] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT dataset.id AS id, dataset.account_id AS account_id, dataset.name AS name, dataset.icon AS icon, dataset.description AS description, dataset.updated_at AS updated_at, dataset.created_at AS created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-04 20:06:34,488.488] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00018s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-04 20:06:34,491.491] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:06:34,491.491] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00014s] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:06:34,493.493] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:06:34,493.493] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00010s] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:06:34,495.495] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:06:34,495.495] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00012s] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:06:34,496.496] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-04 20:06:34,497.497] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 20:06:34] "GET /datasets HTTP/1.1" 200 -
+[2025-05-04 20:06:47,585.585] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-04 20:06:47,586.586] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.id = %(pk_1)s::UUID
+[2025-05-04 20:06:47,586.586] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00029s] {'pk_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:06:47,607.607] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:06:47,607.607] base.py -> _execute_context line:1843 [INFO]: [cached since 13.12s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:06:47,611.611] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(segment.hit_count), %(coalesce_2)s) AS coalesce_1 
+FROM segment 
+WHERE segment.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:06:47,611.611] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00010s] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:06:47,624.624] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:06:47,624.624] base.py -> _execute_context line:1843 [INFO]: [cached since 13.13s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:06:47,626.626] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:06:47,626.626] base.py -> _execute_context line:1843 [INFO]: [cached since 13.13s ago] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:06:47,629.629] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-04 20:06:47,643.643] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 20:06:47] "GET /datasets/46e14707-57d6-421e-8e6d-fff953592f2b HTTP/1.1" 200 -
+[2025-05-04 20:09:14,279.279] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/router/router.py', reloading
+[2025-05-04 20:09:15,495.495] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 20:09:28,093.093] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 20:09:28,114.114] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 20:30:03,595.595] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/schema/document_schema.py', reloading
+[2025-05-04 20:30:04,610.610] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 20:30:16,758.758] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 20:30:16,783.783] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 20:39:54,900.900] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/document_service.py', reloading
+[2025-05-04 20:39:56,145.145] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 20:40:08,694.694] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 20:40:08,716.716] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 20:40:08,820.820] http.py -> _register_error_handler line:57 [ERROR]: An error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/werkzeug/routing/map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-05-04 20:40:08,836.836] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 20:40:08] "[35m[1mPOST /datasets/:dataset_id/documents HTTP/1.1[0m" 500 -
+[2025-05-04 20:40:15,595.595] http.py -> _register_error_handler line:57 [ERROR]: An error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/werkzeug/routing/map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-05-04 20:40:15,598.598] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 20:40:15] "[35m[1mPOST /datasets/:dataset_id/documents HTTP/1.1[0m" 500 -
+[2025-05-04 20:40:31,153.153] base.py -> _execute_context line:1843 [INFO]: select pg_catalog.version()
+[2025-05-04 20:40:31,153.153] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-04 20:40:31,154.154] base.py -> _execute_context line:1843 [INFO]: select current_schema()
+[2025-05-04 20:40:31,154.154] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-04 20:40:31,155.155] base.py -> _execute_context line:1843 [INFO]: show standard_conforming_strings
+[2025-05-04 20:40:31,155.155] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-04 20:40:31,156.156] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-04 20:40:31,158.158] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID ORDER BY dataset.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-04 20:40:31,158.158] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00012s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-04 20:40:31,163.163] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT dataset.id AS id, dataset.account_id AS account_id, dataset.name AS name, dataset.icon AS icon, dataset.description AS description, dataset.updated_at AS updated_at, dataset.created_at AS created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-04 20:40:31,163.163] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00017s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-04 20:40:31,164.164] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:40:31,165.165] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00018s] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:40:31,166.166] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:40:31,166.166] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00016s] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:40:31,169.169] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-04 20:40:31,169.169] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00011s] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:40:31,181.181] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-04 20:40:31,182.182] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 20:40:31] "GET /datasets HTTP/1.1" 200 -
+[2025-05-04 20:40:44,178.178] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 20:40:44] "POST /datasets/46e14707-57d6-421e-8e6d-fff953592f2b/documents HTTP/1.1" 200 -
+[2025-05-04 20:41:30,344.344] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-04 20:41:30,347.347] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.id = %(pk_1)s::UUID
+[2025-05-04 20:41:30,347.347] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00025s] {'pk_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-04 20:41:30,360.360] base.py -> _execute_context line:1843 [INFO]: SELECT upload_file.id AS upload_file_id, upload_file.account_id AS upload_file_account_id, upload_file.name AS upload_file_name, upload_file.key AS upload_file_key, upload_file.size AS upload_file_size, upload_file.extension AS upload_file_extension, upload_file.mime_type AS upload_file_mime_type, upload_file.hash AS upload_file_hash, upload_file.updated_at AS upload_file_updated_at, upload_file.created_at AS upload_file_created_at 
+FROM upload_file 
+WHERE upload_file.account_id = %(account_id_1)s::UUID AND upload_file.id IN (%(id_1_1)s::UUID)
+[2025-05-04 20:41:30,361.361] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00093s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'id_1_1': '94acfe76-bbad-4d4c-9751-bfcd36bca124'}
+[2025-05-04 20:41:30,373.373] base.py -> _execute_context line:1843 [INFO]: INSERT INTO process_rule (account_id, dataset_id, mode, rule) VALUES (%(account_id)s::UUID, %(dataset_id)s::UUID, %(mode)s, %(rule)s::JSONB) RETURNING process_rule.id, process_rule.updated_at, process_rule.created_at
+[2025-05-04 20:41:30,373.373] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00026s] {'account_id': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'dataset_id': UUID('46e14707-57d6-421e-8e6d-fff953592f2b'), 'mode': 'custom', 'rule': '{"pre_process_rules": [{"id": "remove_extra_space", "enabled": true}, {"id": "remove_url_and_email", "enabled": true}], "segment": {"separators": ["\\n"], "chunk_size": 500, "chunk_overlap": 50}}'}
+[2025-05-04 20:41:30,431.431] base.py -> _connection_commit_impl line:2705 [INFO]: COMMIT
+[2025-05-04 20:41:30,433.433] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-04 20:41:30,436.436] base.py -> _execute_context line:1843 [INFO]: SELECT document.id AS document_id, document.account_id AS document_account_id, document.dataset_id AS document_dataset_id, document.upload_file_id AS document_upload_file_id, document.process_rule_id AS document_process_rule_id, document.batch AS document_batch, document.name AS document_name, document.position AS document_position, document.character_count AS document_character_count, document.token_count AS document_token_count, document.processing_started_at AS document_processing_started_at, document.parsing_completed_at AS document_parsing_completed_at, document.splitting_completed_at AS document_splitting_completed_at, document.indexing_completed_at AS document_indexing_completed_at, document.completed_at AS document_completed_at, document.stopped_at AS document_stopped_at, document.error AS document_error, document.enabled AS document_enabled, document.disabled_at AS document_disabled_at, document.status AS document_status, document.updated_at AS document_updated_at, document.created_at AS document_created_at 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID ORDER BY document.position DESC 
+ LIMIT %(param_1)s
+[2025-05-04 20:41:30,437.437] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00090s] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b'), 'param_1': 1}
+[2025-05-04 20:41:30,439.439] base.py -> _execute_context line:1843 [INFO]: SELECT upload_file.id AS upload_file_id, upload_file.account_id AS upload_file_account_id, upload_file.name AS upload_file_name, upload_file.key AS upload_file_key, upload_file.size AS upload_file_size, upload_file.extension AS upload_file_extension, upload_file.mime_type AS upload_file_mime_type, upload_file.hash AS upload_file_hash, upload_file.updated_at AS upload_file_updated_at, upload_file.created_at AS upload_file_created_at 
+FROM upload_file 
+WHERE upload_file.id = %(pk_1)s::UUID
+[2025-05-04 20:41:30,439.439] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00024s] {'pk_1': UUID('94acfe76-bbad-4d4c-9751-bfcd36bca124')}
+[2025-05-04 20:41:30,442.442] base.py -> _execute_context line:1843 [INFO]: SELECT process_rule.id AS process_rule_id, process_rule.account_id AS process_rule_account_id, process_rule.dataset_id AS process_rule_dataset_id, process_rule.mode AS process_rule_mode, process_rule.rule AS process_rule_rule, process_rule.updated_at AS process_rule_updated_at, process_rule.created_at AS process_rule_created_at 
+FROM process_rule 
+WHERE process_rule.id = %(pk_1)s::UUID
+[2025-05-04 20:41:30,442.442] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00013s] {'pk_1': UUID('b271be71-6df8-4e13-9bfb-0e9772de5144')}
+[2025-05-04 20:41:30,445.445] base.py -> _execute_context line:1843 [INFO]: INSERT INTO document (account_id, dataset_id, upload_file_id, process_rule_id, batch, name, position, processing_started_at, parsing_completed_at, splitting_completed_at, indexing_completed_at, completed_at, stopped_at, disabled_at) VALUES (%(account_id)s::UUID, %(dataset_id)s::UUID, %(upload_file_id)s::UUID, %(process_rule_id)s::UUID, %(batch)s, %(name)s, %(position)s, %(processing_started_at)s, %(parsing_completed_at)s, %(splitting_completed_at)s, %(indexing_completed_at)s, %(completed_at)s, %(stopped_at)s, %(disabled_at)s) RETURNING document.id, document.character_count, document.token_count, document.error, document.enabled, document.status, document.updated_at, document.created_at
+[2025-05-04 20:41:30,445.445] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00051s] {'account_id': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'dataset_id': UUID('46e14707-57d6-421e-8e6d-fff953592f2b'), 'upload_file_id': UUID('94acfe76-bbad-4d4c-9751-bfcd36bca124'), 'process_rule_id': UUID('b271be71-6df8-4e13-9bfb-0e9772de5144'), 'batch': '20250504204130999918', 'name': 'langGraph.md', 'position': 1, 'processing_started_at': None, 'parsing_completed_at': None, 'splitting_completed_at': None, 'indexing_completed_at': None, 'completed_at': None, 'stopped_at': None, 'disabled_at': None}
+[2025-05-04 20:41:30,453.453] base.py -> _connection_commit_impl line:2705 [INFO]: COMMIT
+[2025-05-04 20:41:30,454.454] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-04 20:41:30,455.455] base.py -> _execute_context line:1843 [INFO]: SELECT document.id AS document_id, document.account_id AS document_account_id, document.dataset_id AS document_dataset_id, document.upload_file_id AS document_upload_file_id, document.process_rule_id AS document_process_rule_id, document.batch AS document_batch, document.name AS document_name, document.position AS document_position, document.character_count AS document_character_count, document.token_count AS document_token_count, document.processing_started_at AS document_processing_started_at, document.parsing_completed_at AS document_parsing_completed_at, document.splitting_completed_at AS document_splitting_completed_at, document.indexing_completed_at AS document_indexing_completed_at, document.completed_at AS document_completed_at, document.stopped_at AS document_stopped_at, document.error AS document_error, document.enabled AS document_enabled, document.disabled_at AS document_disabled_at, document.status AS document_status, document.updated_at AS document_updated_at, document.created_at AS document_created_at 
+FROM document 
+WHERE document.id = %(pk_1)s::UUID
+[2025-05-04 20:41:30,455.455] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00075s] {'pk_1': UUID('4083fed1-c8c4-4500-a1b8-c2de34ffadff')}
+[2025-05-04 20:41:30,457.457] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-04 20:41:30,458.458] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 20:41:30] "POST /datasets/46e14707-57d6-421e-8e6d-fff953592f2b/documents HTTP/1.1" 200 -
+[2025-05-04 20:42:53,044.044] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/task/document_task.py', reloading
+[2025-05-04 20:42:54,096.096] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 20:43:08,792.792] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 20:43:08,811.811] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 20:43:10,030.030] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/indexing_service.py', reloading
+[2025-05-04 20:43:11,115.115] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 20:43:24,573.573] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 20:43:24,591.591] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 20:43:28,995.995] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/__init__.py', reloading
+[2025-05-04 20:43:29,868.868] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 20:49:32,562.562] _internal.py -> _log line:97 [INFO]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[2025-05-04 20:49:32,563.563] _internal.py -> _log line:97 [INFO]: [33mPress CTRL+C to quit[0m
+[2025-05-04 20:49:32,563.563] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 20:49:45,702.702] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 20:49:45,722.722] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:03:48,916.916] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/indexing_service.py', reloading
+[2025-05-04 21:03:49,963.963] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:04:02,080.080] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:04:02,100.100] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:06:00,674.674] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/model/dataset.py', reloading
+[2025-05-04 21:06:01,850.850] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:06:14,131.131] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:06:14,150.150] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:06:28,228.228] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/model/dataset.py', reloading
+[2025-05-04 21:06:29,359.359] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:06:42,146.146] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:06:42,166.166] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:06:43,485.485] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/model/dataset.py', reloading
+[2025-05-04 21:06:44,685.685] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:06:57,586.586] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:06:57,606.606] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:06:59,922.922] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/model/dataset.py', reloading
+[2025-05-04 21:07:00,999.999] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:07:12,658.658] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:07:12,682.682] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:11:16,019.019] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/core/file_extractor/file_extractor.py', reloading
+[2025-05-04 21:11:17,038.038] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:11:31,003.003] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:11:31,024.024] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:12:13,909.909] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/model/dataset.py', reloading
+[2025-05-04 21:12:14,838.838] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:12:27,644.644] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:12:27,686.686] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:13:32,126.126] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/process_rule_service.py', reloading
+[2025-05-04 21:13:33,253.253] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:13:45,822.822] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:13:45,840.840] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:13:48,105.105] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/process_rule_service.py', reloading
+[2025-05-04 21:13:49,067.067] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:14:01,043.043] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:14:01,063.063] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:15:01,444.444] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/process_rule_service.py', reloading
+[2025-05-04 21:15:02,421.421] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:15:14,879.879] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:15:14,902.902] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:32:21,672.672] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/indexing_service.py', reloading
+[2025-05-04 21:32:22,791.791] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:32:35,697.697] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:32:35,718.718] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:37:47,315.315] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/keyword_table_service.py', reloading
+[2025-05-04 21:37:48,276.276] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:38:00,601.601] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:38:00,621.621] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:38:33,839.839] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/keyword_table_service.py', reloading
+[2025-05-04 21:38:34,838.838] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:38:47,424.424] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:38:47,444.444] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:40:53,471.471] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/keyword_table_service.py', reloading
+[2025-05-04 21:40:54,423.423] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:41:06,517.517] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:41:06,548.548] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 21:47:05,838.838] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/vector_database_service.py', reloading
+[2025-05-04 21:47:06,812.812] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 21:47:19,009.009] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 21:47:19,028.028] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032

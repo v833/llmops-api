@@ -14,6 +14,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 
 from internal.extension.database_extension import db
 from .app import AppDatasetJoin
+from internal.model.upload_file import UploadFile
 
 
 class Dataset(db.Model):
@@ -119,6 +120,24 @@ class Document(db.Model):
     created_at = Column(
         DateTime, nullable=False, server_default=text("CURRENT_TIMESTAMP(0)")
     )
+
+    @property
+    def upload_file(self):
+        """只读属性，获取文档关联的上传文件"""
+        return (
+            db.session.query(UploadFile)
+            .filter(UploadFile.id == self.upload_file_id)
+            .one_or_none()
+        )
+
+    @property
+    def process_rule(self):
+        """只读属性，获取文档关联的处理规则"""
+        return (
+            db.session.query(ProcessRule)
+            .filter(ProcessRule.id == self.process_rule_id)
+            .one_or_none()
+        )
 
 
 class Segment(db.Model):

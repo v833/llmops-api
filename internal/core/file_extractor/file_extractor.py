@@ -16,7 +16,6 @@ from langchain_community.document_loaders import (
     UnstructuredFileLoader,
     TextLoader,
 )
-from langchain_core.documents import Document as LCDocument
 
 from internal.model import UploadFile
 from internal.service import CosService

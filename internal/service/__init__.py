@@ -8,6 +8,10 @@ from .cos_service import CosService
 from .dataset_service import DatasetService
 from .embeddings_service import EmbeddingsService
 from .jieba_service import JiebaService
+from .document_service import DocumentService
+from .indexing_service import IndexingService
+from .keyword_table_service import KeywordTableService
+from .process_rule_service import ProcessRuleService
 
 __all__ = [
     "BuiltinToolService",
@@ -20,4 +24,8 @@ __all__ = [
     "DatasetService",
     "EmbeddingsService",
     "JiebaService",
+    "DocumentService",
+    "IndexingService",
+    "KeywordTableService",
+    "ProcessRuleService",
 ]
