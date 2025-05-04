@@ -1,4 +1,4 @@
-
+import os
 import weaviate
 from injector import inject
 from langchain_core.documents import Document
@@ -7,31 +7,34 @@ from langchain_community.embeddings import QianfanEmbeddingsEndpoint
 from langchain_weaviate import WeaviateVectorStore
 from weaviate import WeaviateClient
 
-ak = 'uexDJXSAF3qDg7tR3vkQZLOS'
-sk = 'ovpeF9z5CcZleDczaFuc49AVhOjxGezS'
+from internal.service.embeddings_service import EmbeddingsService
 
 
 @inject
 class VectorDatabaseService:
     """向量数据库服务"""
+
     client: WeaviateClient
     vector_store: WeaviateVectorStore
+    embeddings_service: EmbeddingsService
 
-    def __init__(self):
+    def __init__(self, embeddings_service: EmbeddingsService):
         """构造函数，完成向量数据库服务的客户端+LangChain向量数据库实例的创建"""
+
+        self.embeddings_service = embeddings_service
+
         # 1.创建/连接weaviate向量数据库
-        self.client = weaviate.connect_to_local()
-    
+        self.client = weaviate.connect_to_local(
+            host=os.getenv("WEAVIATE_HOST", "localhost"),
+            port=os.getenv("WEAVIATE_PORT", "8080"),
+        )
+
         # 2.创建LangChain向量数据库
         self.vector_store = WeaviateVectorStore(
             client=self.client,
             index_name="Dataset",
             text_key="text",
-            embedding=QianfanEmbeddingsEndpoint(
-                        qianfan_ak=ak,
-                        qianfan_sk=sk,
-                        model='embedding-v1',
-                )
+            embedding=self.embeddings_service.embeddings,
         )
 
     def get_retriever(self) -> VectorStoreRetriever:

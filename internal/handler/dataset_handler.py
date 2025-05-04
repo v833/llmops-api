@@ -7,6 +7,8 @@ from internal.schema.dataset_schema import (
     GetDatasetsWithPageReq,
     GetDatasetsWithPageResp,
 )
+from internal.service.embeddings_service import EmbeddingsService
+from internal.service.jieba_service import JiebaService
 from pkg.paginator import PageModel
 from flask import request
 from uuid import UUID
@@ -21,9 +23,16 @@ class DatasetHandler:
 
     dataset_service: DatasetService
     db: SQLAlchemy
+    embeddings_server: EmbeddingsService
+    jieba_service: JiebaService
 
     def embeddings_query(self):
-        pass
+        query = request.args.get("query")
+        # vectors = self.embeddings_server.embeddings.embed_query(query)
+        # return success_json({"vectors": vectors})
+
+        keywords = self.jieba_service.extract_keywords(query)
+        return success_json({"keywords": keywords})
 
     def create_dataset(self):
         """创建知识库"""

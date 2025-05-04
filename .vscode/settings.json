@@ -9,7 +9,7 @@
     "**/*.pyo": true,
     "**/*.pyd": true
   },
-  "explorer.excludeGitIgnore": true,
+  "explorer.excludeGitIgnore": false,
   "sqltools.connections": [
     {
       "previewLimit": 50,
@@ -21,5 +21,6 @@
       "username": "postgres",
       "password": "123221"
     }
-  ]
+  ],
+  "todo-tree.filtering.useBuiltInExcludes": "none"
 }

@@ -372,3 +372,45 @@ WHERE document.dataset_id = %(dataset_id_1)s::UUID
 [2025-05-04 17:31:23,537.537] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
 [2025-05-04 17:31:26,146.146] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
 [2025-05-04 17:31:26,159.159] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:18:13,578.578] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 18:18:13,616.616] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:18:19,094.094] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/vector_database_service.py', reloading
+[2025-05-04 18:18:43,608.608] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 18:18:43,629.629] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:19:06,151.151] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/vector_database_service.py', reloading
+[2025-05-04 18:19:29,831.831] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 18:19:29,850.850] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:26:43,812.812] _internal.py -> _log line:97 [INFO]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[2025-05-04 18:26:43,813.813] _internal.py -> _log line:97 [INFO]: [33mPress CTRL+C to quit[0m
+[2025-05-04 18:26:43,814.814] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 18:26:55,342.342] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 18:26:55,364.364] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:27:38,194.194] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/__init__.py', reloading
+[2025-05-04 18:27:39,270.270] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 18:29:36,288.288] _internal.py -> _log line:97 [INFO]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[2025-05-04 18:29:36,288.288] _internal.py -> _log line:97 [INFO]: [33mPress CTRL+C to quit[0m
+[2025-05-04 18:29:36,289.289] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 18:29:48,045.045] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 18:29:48,063.063] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:29:48,720.720] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 18:29:48] "GET /datasets/embeddings?query=你好,%20你是? HTTP/1.1" 200 -
+[2025-05-04 18:31:09,569.569] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/handler/dataset_handler.py', reloading
+[2025-05-04 18:31:10,663.663] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 18:31:23,840.840] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 18:31:23,859.859] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:31:29,353.353] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/handler/dataset_handler.py', reloading
+[2025-05-04 18:31:30,451.451] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 18:31:44,022.022] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 18:31:44,040.040] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:31:56,031.031] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/handler/dataset_handler.py', reloading
+[2025-05-04 18:31:56,981.981] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-04 18:32:09,302.302] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-04 18:32:09,324.324] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-04 18:32:09,394.394] __init__.py -> initialize line:113 [DEBUG]: Building prefix dict from the default dictionary ...
+[2025-05-04 18:32:09,770.770] __init__.py -> initialize line:146 [DEBUG]: Dumping model to file cache /var/folders/lf/npfvn1s91v5_k5zdqtnnwp5r0000gn/T/jieba.cache
+[2025-05-04 18:32:09,804.804] __init__.py -> initialize line:164 [DEBUG]: Loading model cost 0.410 seconds.
+[2025-05-04 18:32:09,808.808] __init__.py -> initialize line:166 [DEBUG]: Prefix dict has been built successfully.
+[2025-05-04 18:32:09,810.810] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 18:32:09] "GET /datasets/embeddings?query=你好,%20你是? HTTP/1.1" 200 -
+[2025-05-04 18:32:51,625.625] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 18:32:51] "GET /datasets/embeddings?query=你好,%20我是wq,%20我喜欢打篮球,你呢? HTTP/1.1" 200 -
+[2025-05-04 18:34:09,679.679] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [04/May/2025 18:34:09] "GET /datasets/embeddings?query=清晨的阳光透过薄雾洒在石板路上，空气中弥漫着泥土和青草的芬芳。街角的咖啡店刚开门，浓郁的香气吸引了几位早起的顾客。远处传来自行车的铃声，孩子们背着书包匆匆跑向学校。公园里，老人们打着太极，动作缓慢而有力。一只橘猫懒洋洋地趴在墙头，眯着眼打量过往的行人。城市的喧嚣尚未完全苏醒，此刻的宁静仿佛被按下了暂停键。 HTTP/1.1" 200 -
