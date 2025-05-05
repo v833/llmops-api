@@ -13,6 +13,7 @@ from .indexing_service import IndexingService
 from .keyword_table_service import KeywordTableService
 from .process_rule_service import ProcessRuleService
 from .segment_service import SegmentService
+from .retrieval_service import RetrievalService
 
 __all__ = [
     "BuiltinToolService",
@@ -30,4 +31,5 @@ __all__ = [
     "KeywordTableService",
     "ProcessRuleService",
     "SegmentService",
+    "RetrievalService",
 ]

@@ -1,10 +1,50 @@
 from flask_wtf import FlaskForm
 from marshmallow import Schema, fields, pre_dump
-from wtforms import StringField
-from wtforms.validators import DataRequired, Length, URL, Optional
+from wtforms import FloatField, IntegerField, StringField
+from wtforms.validators import AnyOf, DataRequired, Length, URL, NumberRange, Optional
 
+from internal.entity.dataset_entity import RetrievalStrategy
 from internal.model import Dataset
 from pkg.paginator import PaginatorReq
+
+
+class HitReq(FlaskForm):
+    """知识库召回测试请求"""
+
+    query = StringField(
+        "query",
+        validators=[
+            DataRequired("查询内容不能为空"),
+            Length(max=200, message="查询内容长度不能超过200字符"),
+        ],
+    )
+
+    retrieval_strategy = StringField(
+        "retrieval_strategy",
+        validators=[
+            DataRequired("检索策略不能为空"),
+            AnyOf(
+                [item.value for item in RetrievalStrategy],
+                message="检索策略必须是以下值之一: %s"
+                % [item.value for item in RetrievalStrategy],
+            ),
+        ],
+    )
+
+    k = IntegerField(
+        "k",
+        validators=[
+            DataRequired("最大召回数量不能为空"),
+            NumberRange(min=1, max=10, message="最大召回数量必须在1-10之间"),
+        ],
+    )
+
+    score = FloatField(
+        "score",
+        validators=[
+            NumberRange(min=0, max=0.99, message="最小得分必须在0-0.99之间"),
+        ],
+    )
 
 
 class CreateDatasetReq(FlaskForm):

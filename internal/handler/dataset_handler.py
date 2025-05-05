@@ -4,6 +4,7 @@ from weaviate.classes.query import Filter
 from internal.core.file_extractor.file_extractor import FileExtractor
 from internal.schema.dataset_schema import (
     CreateDatasetReq,
+    HitReq,
     UpdateDatasetReq,
     GetDatasetResp,
     GetDatasetsWithPageReq,
@@ -33,31 +34,13 @@ class DatasetHandler:
 
     def hit(self, dataset_id: UUID):
         """根据传递的知识库id+检索参数执行召回测试"""
-        pass
+        req = HitReq()
+        if not req.validate():
+            return validate_error_json(req.errors)
 
-        q = "a123221"
-        retriever = self.vector_database_service.vector_store.as_retriever(
-            search_type="mmr",
-            search_kwargs={
-                "k": 10,
-                # "filters": Filter.all_of(
-                #     [
-                #         Filter.by_property("document_id").equal(
-                #             "c990b73f-7572-43f3-8ff7-b2c26017909b"
-                #         )
-                #     ]
-                # ),
-            },
-        )
-        documents = retriever.invoke(q)
-        return success_json(
-            {
-                "documents": [
-                    {"content": document.page_content, "metadata": document.metadata}
-                    for document in documents
-                ]
-            }
-        )
+        hit_result = self.dataset_service.hit(dataset_id, req)
+
+        return success_json(hit_result)
 
     def embeddings_query(self):
         # upload_file = self.db.session.query(UploadFile).get(
