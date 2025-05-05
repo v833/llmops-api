@@ -262,7 +262,7 @@ class UpdateDocumentEnabledReq(FlaskForm):
 
     enabled = BooleanField("enabled")
 
-    def validate_enabled(self, field: BooleanField) -> None:
+    def validate_enabled(self, field: BooleanField):
         """校验文档启用状态enabled"""
         if not isinstance(field.data, bool):
             raise ValidationError("enabled状态不能为空且必须为布尔值")
