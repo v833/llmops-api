@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 from injector import inject
+from weaviate.classes.query import Filter
 from internal.core.file_extractor.file_extractor import FileExtractor
 from internal.schema.dataset_schema import (
     CreateDatasetReq,
@@ -34,13 +35,29 @@ class DatasetHandler:
         """根据传递的知识库id+检索参数执行召回测试"""
         pass
 
-        q = "alembic==1.15.2"
+        q = "a123221"
         retriever = self.vector_database_service.vector_store.as_retriever(
             search_type="mmr",
-            search_kwargs={"k": 10},
+            search_kwargs={
+                "k": 10,
+                # "filters": Filter.all_of(
+                #     [
+                #         Filter.by_property("document_id").equal(
+                #             "c990b73f-7572-43f3-8ff7-b2c26017909b"
+                #         )
+                #     ]
+                # ),
+            },
         )
         documents = retriever.invoke(q)
-        return success_json({"documents": [doc.page_content for doc in documents]})
+        return success_json(
+            {
+                "documents": [
+                    {"content": document.page_content, "metadata": document.metadata}
+                    for document in documents
+                ]
+            }
+        )
 
     def embeddings_query(self):
         # upload_file = self.db.session.query(UploadFile).get(

@@ -5,7 +5,6 @@ from langchain_core.documents import Document
 from langchain_core.vectorstores import VectorStoreRetriever
 from langchain_weaviate import WeaviateVectorStore
 from weaviate import WeaviateClient
-
 from internal.service.embeddings_service import EmbeddingsService
 
 COLLECTION_NAME = "Dataset"

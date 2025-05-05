@@ -51,21 +51,21 @@ class EmbeddingsService:
     def __init__(self, redis: Redis):
         """构造函数，初始化文本嵌入模型客户端、存储器、缓存客户端"""
         self._store = RedisStore(client=redis)
-        # self._embeddings = HuggingFaceEmbeddings(
-        #     model_name="nomic-ai/nomic-embed-text-v1.5",
-        #     cache_folder=os.path.join(os.getcwd(), "internal", "core", "embeddings"),
-        #     model_kwargs={
-        #         "trust_remote_code": True,
-        #     },
-        # )
+        self._embeddings = HuggingFaceEmbeddings(
+            model_name="nomic-ai/nomic-embed-text-v1.5",
+            cache_folder=os.path.join(os.getcwd(), "internal", "core", "embeddings"),
+            model_kwargs={
+                "trust_remote_code": True,
+            },
+        )
         # self._embeddings = OpenAIEmbeddings(
         #     model="text-embedding-3-small",
         # )
-        self._embeddings = QianfanFloatEmbedding(
-            qianfan_ak=ak,
-            qianfan_sk=sk,
-            model="embedding-v1",
-        )
+        # self._embeddings = QianfanFloatEmbedding(
+        #     qianfan_ak=ak,
+        #     qianfan_sk=sk,
+        #     model="embedding-v1",
+        # )
         self._cache_backed_embeddings = CacheBackedEmbeddings.from_bytes_store(
             self._embeddings,
             self._store,
