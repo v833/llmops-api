@@ -102,9 +102,7 @@ class DatasetService(BaseService):
 
         return dataset
 
-    def get_datasets_with_page(
-        self, req: GetDatasetsWithPageReq
-    ) -> tuple[list[Dataset], Paginator]:
+    def get_datasets_with_page(self, req: GetDatasetsWithPageReq):
         """根据传递的信息获取知识库列表分页数据"""
 
         # 1.构建分页查询器

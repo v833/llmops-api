@@ -34,6 +34,14 @@ class DatasetHandler:
         """根据传递的知识库id+检索参数执行召回测试"""
         pass
 
+        q = "alembic==1.15.2"
+        retriever = self.vector_database_service.vector_store.as_retriever(
+            search_type="mmr",
+            search_kwargs={"k": 10},
+        )
+        documents = retriever.invoke(q)
+        return success_json({"documents": [doc.page_content for doc in documents]})
+
     def embeddings_query(self):
         # upload_file = self.db.session.query(UploadFile).get(
         #     "94acfe76-bbad-4d4c-9751-bfcd36bca124"

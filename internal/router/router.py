@@ -6,6 +6,7 @@ from injector import inject
 from internal.handler import AppHandler, BuiltinToolHandler, ApiToolHandler
 from internal.handler.dataset_handler import DatasetHandler
 from internal.handler.document_handler import DocumentHandler
+from internal.handler.segment_handler import SegmentHandler
 from internal.handler.upload_file_handler import UploadFileHandler
 
 
@@ -20,6 +21,7 @@ class Router:
     upload_file_handler: UploadFileHandler
     dataset_handler: DatasetHandler
     document_handler: DocumentHandler
+    segment_handler: SegmentHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -180,6 +182,26 @@ class Router:
             "/datasets/<uuid:dataset_id>/documents/<uuid:document_id>/delete",
             methods=["POST"],
             view_func=self.document_handler.delete_document,
+        )
+
+        # 文档片段模块
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/documents/<uuid:document_id>/segments",
+            view_func=self.segment_handler.get_segments_with_page,
+        )
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/documents/<uuid:document_id>/segments",
+            methods=["POST"],
+            view_func=self.segment_handler.create_segment,
+        )
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/documents/<uuid:document_id>/segments/<uuid:segment_id>",
+            view_func=self.segment_handler.get_segment,
+        )
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/documents/<uuid:document_id>/segments/<uuid:segment_id>/enabled",
+            methods=["POST"],
+            view_func=self.segment_handler.update_segment_enabled,
         )
 
         # 在应用上去注册蓝图
