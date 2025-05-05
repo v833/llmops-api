@@ -1,23 +1,39 @@
+import json
+import uuid
 import os
 from dataclasses import dataclass
+from operator import itemgetter
+from queue import Queue
+from threading import Thread
+from injector import inject
+from langchain.memory import ConversationBufferWindowMemory
+from langchain_community.chat_message_histories import FileChatMessageHistory
+from langchain_core.documents import Document
+from langchain_core.memory import BaseMemory
+from langchain_core.messages import BaseMessage, ToolMessage
 from langchain_core.output_parsers import StrOutputParser
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_community.chat_message_histories import FileChatMessageHistory
-from langchain_core.runnables import RunnablePassthrough, RunnableLambda
+from langchain_core.runnables import RunnablePassthrough, RunnableLambda, RunnableConfig
+from langchain_core.tracers import Run
 from langchain_openai import ChatOpenAI
-from internal.schema import CompletionReq
-from internal.service import AppService
-from internal.service.api_tool_service import ApiToolService
-from internal.task import demo_task
-from pkg.response import success_message, validate_error_json, success_json
-from injector import inject
-from operator import itemgetter
-from langchain.memory import ConversationBufferWindowMemory
-import uuid
-from langchain_core.runnables import RunnableConfig
-from langchain_core.memory import BaseMemory
-from langchain_core.tracers.schemas import Run
-from internal.service.vector_database_service import VectorDatabaseService
+from langgraph.constants import END
+from langgraph.graph import MessagesState, StateGraph
+
+from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
+from internal.schema.app_schema import CompletionReq
+from internal.service import (
+    AppService,
+    VectorDatabaseService,
+    ApiToolService,
+    EmbeddingsService,
+)
+from internal.service.conversation_service import ConversationService
+from pkg.response import (
+    success_json,
+    validate_error_json,
+    success_message,
+    compact_generate_response,
+)
 
 
 @inject
@@ -28,6 +44,8 @@ class AppHandler:
     app_service: AppService
     api_tool_service: ApiToolService
     vector_database_service: VectorDatabaseService
+    builtin_provider_manager: BuiltinProviderManager
+    conversation_service: ConversationService
 
     def create_app(self):
         """调用服务创建新的APP记录"""
@@ -134,6 +152,8 @@ class AppHandler:
         return success_json({"content": content})
 
     def ping(self):
-        demo_task.delay(uuid.uuid4())
+        human_message = "你可以简单介绍下Agent吗?"
+        ai_message = "Agent（智能代理） 是一种能够 自主感知环境、做出决策并执行动作 的智能系统，通常基于大语言模型（LLM）或规则引擎驱动。它的核心目标是 替代或辅助人类完成特定任务，例如回答问题、自动化流程、数据分析等。"
+        summary = self.conversation_service.summary(human_message, ai_message)
 
-        return success_message("pong")
+        return success_json({"content": summary})
