@@ -2969,3 +2969,297 @@ WHERE upload_file.id = %(id_1)s::UUID
 [2025-05-05 18:43:04,851.851] base.py -> _execute_context line:1843 [INFO]: [cached since 30.07s ago] {'id_1': UUID('3d8bd984-2744-4aee-8390-246e3da02efe')}
 [2025-05-05 18:43:04,852.852] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
 [2025-05-05 18:43:04,853.853] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:43:04] "POST /datasets/46e14707-57d6-421e-8e6d-fff953592f2b/hit HTTP/1.1" 200 -
+[2025-05-05 18:46:26,466.466] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/dataset_service.py', reloading
+[2025-05-05 18:46:27,810.810] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 18:46:52,938.938] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-05 18:46:52,957.957] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-05 18:46:54,162.162] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/dataset_service.py', reloading
+[2025-05-05 18:46:55,499.499] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 18:47:17,681.681] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-05 18:47:17,701.701] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-05 18:47:24,184.184] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/dataset_service.py', reloading
+[2025-05-05 18:47:25,135.135] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 18:47:47,002.002] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-05 18:47:47,022.022] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-05 18:47:52,426.426] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/handler/dataset_handler.py', reloading
+[2025-05-05 18:47:53,394.394] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 18:48:17,676.676] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-05 18:48:17,713.713] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-05 18:48:28,511.511] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/schema/dataset_schema.py', reloading
+[2025-05-05 18:48:29,419.419] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 18:51:11,727.727] _internal.py -> _log line:97 [INFO]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[2025-05-05 18:51:11,728.728] _internal.py -> _log line:97 [INFO]: [33mPress CTRL+C to quit[0m
+[2025-05-05 18:51:11,729.729] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 18:51:35,865.865] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-05 18:51:35,887.887] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-05 18:51:40,891.891] http.py -> _register_error_handler line:57 [ERROR]: An error occurred: 405 Method Not Allowed: The method is not allowed for the requested URL.
+Traceback (most recent call last):
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/werkzeug/routing/map.py", line 624, in match
+    raise MethodNotAllowed(valid_methods=list(e.have_match_for)) from None
+werkzeug.exceptions.MethodNotAllowed: 405 Method Not Allowed: The method is not allowed for the requested URL.
+[2025-05-05 18:51:40,898.898] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:51:40] "[35m[1mPOST /datasets/46e14707-57d6-421e-8e6d-fff953592f2b/queries HTTP/1.1[0m" 500 -
+[2025-05-05 18:51:46,434.434] base.py -> _execute_context line:1843 [INFO]: select pg_catalog.version()
+[2025-05-05 18:51:46,435.435] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-05 18:51:46,437.437] base.py -> _execute_context line:1843 [INFO]: select current_schema()
+[2025-05-05 18:51:46,438.438] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-05 18:51:46,439.439] base.py -> _execute_context line:1843 [INFO]: show standard_conforming_strings
+[2025-05-05 18:51:46,439.439] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-05 18:51:46,440.440] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:51:46,442.442] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.id = %(pk_1)s::UUID
+[2025-05-05 18:51:46,442.442] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00014s] {'pk_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:51:46,446.446] base.py -> _execute_context line:1843 [INFO]: SELECT dataset_query.id AS dataset_query_id, dataset_query.dataset_id AS dataset_query_dataset_id, dataset_query.query AS dataset_query_query, dataset_query.source AS dataset_query_source, dataset_query.source_app_id AS dataset_query_source_app_id, dataset_query.created_by AS dataset_query_created_by, dataset_query.updated_at AS dataset_query_updated_at, dataset_query.created_at AS dataset_query_created_at 
+FROM dataset_query 
+WHERE dataset_query.dataset_id = %(dataset_id_1)s::UUID ORDER BY dataset_query.created_at DESC 
+ LIMIT %(param_1)s
+[2025-05-05 18:51:46,446.446] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00023s] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b'), 'param_1': 10}
+[2025-05-05 18:51:46,451.451] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 18:51:46,452.452] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:51:46] "GET /datasets/46e14707-57d6-421e-8e6d-fff953592f2b/queries HTTP/1.1" 200 -
+[2025-05-05 18:53:19,807.807] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/router/router.py', reloading
+[2025-05-05 18:53:20,934.934] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 18:56:57,885.885] _internal.py -> _log line:97 [INFO]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[2025-05-05 18:56:57,886.886] _internal.py -> _log line:97 [INFO]: [33mPress CTRL+C to quit[0m
+[2025-05-05 18:56:57,887.887] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 18:57:27,510.510] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-05 18:57:27,529.529] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
+[2025-05-05 18:57:27,965.965] base.py -> _execute_context line:1843 [INFO]: select pg_catalog.version()
+[2025-05-05 18:57:27,965.965] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-05 18:57:27,975.975] base.py -> _execute_context line:1843 [INFO]: select current_schema()
+[2025-05-05 18:57:27,975.975] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-05 18:57:27,985.985] base.py -> _execute_context line:1843 [INFO]: show standard_conforming_strings
+[2025-05-05 18:57:27,985.985] base.py -> _execute_context line:1843 [INFO]: [raw sql] {}
+[2025-05-05 18:57:28,004.004] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:57:28,009.009] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID ORDER BY dataset.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-05 18:57:28,009.009] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00027s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-05 18:57:28,026.026] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT dataset.id AS id, dataset.account_id AS account_id, dataset.name AS name, dataset.icon AS icon, dataset.description AS description, dataset.updated_at AS updated_at, dataset.created_at AS created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-05 18:57:28,026.026] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00021s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-05 18:57:28,037.037] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:28,037.037] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00027s] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:28,042.042] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:28,042.042] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00018s] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:28,047.047] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:28,047.047] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00014s] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:28,049.049] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 18:57:28,050.050] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:57:28] "GET /datasets HTTP/1.1" 200 -
+[2025-05-05 18:57:34,364.364] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:57:34,367.367] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.id = %(pk_1)s::UUID
+[2025-05-05 18:57:34,368.368] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00031s] {'pk_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:34,373.373] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID AND dataset.name = %(name_1)s AND dataset.id != %(id_1)s::UUID
+[2025-05-05 18:57:34,374.374] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00022s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'name_1': '知识库1', 'id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:34,389.389] base.py -> _execute_context line:1843 [INFO]: UPDATE dataset SET name=%(name)s, description=%(description)s WHERE dataset.id = %(dataset_id)s::UUID
+[2025-05-05 18:57:34,389.389] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00023s] {'name': '知识库1', 'description': '当你需要回答管理《知识库1》的时候可以引用该知识库。', 'dataset_id': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:34,427.427] base.py -> _connection_commit_impl line:2705 [INFO]: COMMIT
+[2025-05-05 18:57:34,429.429] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:57:34] "POST /datasets/46e14707-57d6-421e-8e6d-fff953592f2b HTTP/1.1" 200 -
+[2025-05-05 18:57:36,724.724] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:57:36,725.725] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID ORDER BY dataset.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-05 18:57:36,725.725] base.py -> _execute_context line:1843 [INFO]: [cached since 8.716s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-05 18:57:36,726.726] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT dataset.id AS id, dataset.account_id AS account_id, dataset.name AS name, dataset.icon AS icon, dataset.description AS description, dataset.updated_at AS updated_at, dataset.created_at AS created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-05 18:57:36,726.726] base.py -> _execute_context line:1843 [INFO]: [cached since 8.7s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-05 18:57:36,727.727] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:36,727.727] base.py -> _execute_context line:1843 [INFO]: [cached since 8.69s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:36,729.729] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:36,729.729] base.py -> _execute_context line:1843 [INFO]: [cached since 8.687s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:36,736.736] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:36,736.736] base.py -> _execute_context line:1843 [INFO]: [cached since 8.69s ago] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:36,742.742] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 18:57:36,745.745] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:57:36] "GET /datasets HTTP/1.1" 200 -
+[2025-05-05 18:57:42,724.724] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:57:42,726.726] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID AND dataset.name = %(name_1)s
+[2025-05-05 18:57:42,726.726] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00031s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'name_1': '知识库111'}
+[2025-05-05 18:57:42,736.736] base.py -> _execute_context line:1843 [INFO]: INSERT INTO dataset (account_id, name, icon, description) VALUES (%(account_id)s::UUID, %(name)s, %(icon)s, %(description)s) RETURNING dataset.id, dataset.updated_at, dataset.created_at
+[2025-05-05 18:57:42,736.736] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00015s] {'account_id': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'name': '知识库111', 'icon': 'https://llm-ops-1305380765.cos.ap-shanghai.myqcloud.com/2025%2F05%2F04%2Fc9f08f6a-7154-4426-b2ca-5db59bd20cf0.png', 'description': '当你需要回答管理《知识库111》的时候可以引用该知识库。'}
+[2025-05-05 18:57:42,749.749] base.py -> _connection_commit_impl line:2705 [INFO]: COMMIT
+[2025-05-05 18:57:42,750.750] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:57:42] "POST /datasets HTTP/1.1" 200 -
+[2025-05-05 18:57:44,823.823] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:57:44,824.824] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID ORDER BY dataset.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-05 18:57:44,824.824] base.py -> _execute_context line:1843 [INFO]: [cached since 16.82s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-05 18:57:44,826.826] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT dataset.id AS id, dataset.account_id AS account_id, dataset.name AS name, dataset.icon AS icon, dataset.description AS description, dataset.updated_at AS updated_at, dataset.created_at AS created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-05 18:57:44,826.826] base.py -> _execute_context line:1843 [INFO]: [cached since 16.8s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-05 18:57:44,828.828] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:44,828.828] base.py -> _execute_context line:1843 [INFO]: [cached since 16.79s ago] {'dataset_id_1': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:57:44,838.838] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:44,838.838] base.py -> _execute_context line:1843 [INFO]: [cached since 16.8s ago] {'dataset_id_1': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:57:44,839.839] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:44,839.839] base.py -> _execute_context line:1843 [INFO]: [cached since 16.79s ago] {'coalesce_2': 0, 'dataset_id_1': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:57:44,839.839] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:44,839.839] base.py -> _execute_context line:1843 [INFO]: [cached since 16.8s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:44,840.840] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:44,840.840] base.py -> _execute_context line:1843 [INFO]: [cached since 16.8s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:44,841.841] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:57:44,841.841] base.py -> _execute_context line:1843 [INFO]: [cached since 16.79s ago] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:57:44,844.844] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 18:57:44,847.847] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:57:44] "GET /datasets HTTP/1.1" 200 -
+[2025-05-05 18:59:11,714.714] http.py -> _register_error_handler line:57 [ERROR]: An error occurred: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+Traceback (most recent call last):
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 891, in dispatch_request
+    self.raise_routing_exception(req)
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 500, in raise_routing_exception
+    raise request.routing_exception  # type: ignore[misc]
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/ctx.py", line 362, in match_request
+    result = self.url_adapter.match(return_rule=True)  # type: ignore
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/werkzeug/routing/map.py", line 629, in match
+    raise NotFound() from None
+werkzeug.exceptions.NotFound: 404 Not Found: The requested URL was not found on the server. If you entered the URL manually please check your spelling and try again.
+[2025-05-05 18:59:11,733.733] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:59:11] "[35m[1mPOST /datasets/123/delete HTTP/1.1[0m" 500 -
+[2025-05-05 18:59:25,875.875] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:59:25,876.876] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID ORDER BY dataset.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-05 18:59:25,876.876] base.py -> _execute_context line:1843 [INFO]: [cached since 117.9s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-05 18:59:25,879.879] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT dataset.id AS id, dataset.account_id AS account_id, dataset.name AS name, dataset.icon AS icon, dataset.description AS description, dataset.updated_at AS updated_at, dataset.created_at AS created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-05 18:59:25,879.879] base.py -> _execute_context line:1843 [INFO]: [cached since 117.9s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-05 18:59:25,879.879] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:25,879.879] base.py -> _execute_context line:1843 [INFO]: [cached since 117.8s ago] {'dataset_id_1': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:59:25,880.880] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:25,880.880] base.py -> _execute_context line:1843 [INFO]: [cached since 117.8s ago] {'dataset_id_1': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:59:25,881.881] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:25,881.881] base.py -> _execute_context line:1843 [INFO]: [cached since 117.8s ago] {'coalesce_2': 0, 'dataset_id_1': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:59:25,882.882] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:25,882.882] base.py -> _execute_context line:1843 [INFO]: [cached since 117.8s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:59:25,882.882] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:25,882.882] base.py -> _execute_context line:1843 [INFO]: [cached since 117.8s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:59:25,883.883] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:25,883.883] base.py -> _execute_context line:1843 [INFO]: [cached since 117.8s ago] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:59:25,884.884] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 18:59:25,885.885] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:59:25] "GET /datasets HTTP/1.1" 200 -
+[2025-05-05 18:59:37,612.612] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:59:37,614.614] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.id = %(pk_1)s::UUID
+[2025-05-05 18:59:37,614.614] base.py -> _execute_context line:1843 [INFO]: [cached since 123.2s ago] {'pk_1': UUID('1fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:59:37,615.615] http.py -> _register_error_handler line:57 [ERROR]: An error occurred: 
+Traceback (most recent call last):
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 917, in full_dispatch_request
+    rv = self.dispatch_request()
+         ^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/env/lib/python3.12/site-packages/flask/app.py", line 902, in dispatch_request
+    return self.ensure_sync(self.view_functions[rule.endpoint])(**view_args)  # type: ignore[no-any-return]
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/handler/dataset_handler.py", line 116, in delete_dataset
+    self.dataset_service.delete_dataset(dataset_id)
+  File "/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/service/dataset_service.py", line 227, in delete_dataset
+    raise NotFoundException("该知识库不存在")
+internal.exception.exception.NotFoundException
+[2025-05-05 18:59:37,617.617] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 18:59:37,617.617] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:59:37] "POST /datasets/1fb0c22c-8219-43c3-864b-b1360d390ad4/delete HTTP/1.1" 200 -
+[2025-05-05 18:59:45,373.373] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:59:45,374.374] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.id = %(pk_1)s::UUID
+[2025-05-05 18:59:45,374.374] base.py -> _execute_context line:1843 [INFO]: [cached since 130.9s ago] {'pk_1': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:59:45,392.392] base.py -> _execute_context line:1843 [INFO]: DELETE FROM dataset WHERE dataset.id = %(id)s::UUID
+[2025-05-05 18:59:45,393.393] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00022s] {'id': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:59:45,394.394] base.py -> _connection_commit_impl line:2705 [INFO]: COMMIT
+[2025-05-05 18:59:45,396.396] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:59:45,397.397] base.py -> _execute_context line:1843 [INFO]: DELETE FROM app_dataset_join WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:45,397.397] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00008s] {'dataset_id_1': UUID('6fb0c22c-8219-43c3-864b-b1360d390ad4')}
+[2025-05-05 18:59:45,399.399] base.py -> _connection_commit_impl line:2705 [INFO]: COMMIT
+[2025-05-05 18:59:45,486.486] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:59:45] "POST /datasets/6fb0c22c-8219-43c3-864b-b1360d390ad4/delete HTTP/1.1" 200 -
+[2025-05-05 18:59:48,816.816] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 18:59:48,816.816] base.py -> _execute_context line:1843 [INFO]: SELECT dataset.id AS dataset_id, dataset.account_id AS dataset_account_id, dataset.name AS dataset_name, dataset.icon AS dataset_icon, dataset.description AS dataset_description, dataset.updated_at AS dataset_updated_at, dataset.created_at AS dataset_created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID ORDER BY dataset.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-05 18:59:48,816.816] base.py -> _execute_context line:1843 [INFO]: [cached since 140.7s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-05 18:59:48,817.817] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT dataset.id AS id, dataset.account_id AS account_id, dataset.name AS name, dataset.icon AS icon, dataset.description AS description, dataset.updated_at AS updated_at, dataset.created_at AS created_at 
+FROM dataset 
+WHERE dataset.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-05 18:59:48,817.817] base.py -> _execute_context line:1843 [INFO]: [cached since 140.7s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-05 18:59:48,818.818] base.py -> _execute_context line:1843 [INFO]: SELECT count(document.id) AS count_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:48,818.818] base.py -> _execute_context line:1843 [INFO]: [cached since 140.7s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:59:48,819.819] base.py -> _execute_context line:1843 [INFO]: SELECT count(app_dataset_join.id) AS count_1 
+FROM app_dataset_join 
+WHERE app_dataset_join.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:48,819.819] base.py -> _execute_context line:1843 [INFO]: [cached since 140.7s ago] {'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:59:48,819.819] base.py -> _execute_context line:1843 [INFO]: SELECT coalesce(sum(document.character_count), %(coalesce_2)s) AS coalesce_1 
+FROM document 
+WHERE document.dataset_id = %(dataset_id_1)s::UUID
+[2025-05-05 18:59:48,820.820] base.py -> _execute_context line:1843 [INFO]: [cached since 140.7s ago] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
+[2025-05-05 18:59:48,821.821] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 18:59:48,821.821] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:59:48] "GET /datasets HTTP/1.1" 200 -

@@ -136,15 +136,20 @@ class Router:
             "/datasets/embeddings", view_func=self.dataset_handler.embeddings_query
         )
 
-        # bp.add_url_rule(
-        #     "/datasets/<uuid:dataset_id>/delete",
-        #     methods=["POST"],
-        #     view_func=self.dataset_handler.delete_dataset,
-        # )
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/delete",
+            methods=["POST"],
+            view_func=self.dataset_handler.delete_dataset,
+        )
         bp.add_url_rule(
             "/datasets/<uuid:dataset_id>/hit",
             methods=["POST"],
             view_func=self.dataset_handler.hit,
+        )
+
+        bp.add_url_rule(
+            "/datasets/<uuid:dataset_id>/queries",
+            view_func=self.dataset_handler.get_dataset_queries,
         )
 
         # 文档模块

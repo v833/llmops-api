@@ -9,6 +9,7 @@ from internal.schema.dataset_schema import (
     GetDatasetResp,
     GetDatasetsWithPageReq,
     GetDatasetsWithPageResp,
+    GetDatasetQueriesResp,
 )
 from internal.service.embeddings_service import EmbeddingsService
 from internal.service.jieba_service import JiebaService
@@ -102,3 +103,15 @@ class DatasetHandler:
         resp = GetDatasetsWithPageResp(many=True)
 
         return success_json(PageModel(list=resp.dump(datasets), paginator=paginator))
+
+    def get_dataset_queries(self, dataset_id: UUID):
+        """根据传递的知识库id获取最近的10条查询记录"""
+
+        dataset_queries = self.dataset_service.get_dataset_queries(dataset_id)
+        resp = GetDatasetQueriesResp(many=True)
+        return success_json(resp.dump(dataset_queries))
+
+    def delete_dataset(self, dataset_id: UUID):
+        """根据传递的知识库id删除知识库"""
+        self.dataset_service.delete_dataset(dataset_id)
+        return success_message("删除知识库成功")

@@ -9,6 +9,7 @@ from .dataset_schema import (
     GetDatasetsWithPageReq,
     GetDatasetsWithPageResp,
     HitReq,
+    GetDatasetQueriesResp,
 )
 from .segment_schema import (
     GetSegmentsWithPageReq,
@@ -31,4 +32,5 @@ __all__ = [
     "GetSegmentsWithPageReq",
     "GetSegmentsWithPageResp",
     "HitReq",
+    "GetDatasetQueriesResp",
 ]

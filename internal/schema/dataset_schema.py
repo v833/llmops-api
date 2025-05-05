@@ -2,9 +2,9 @@ from flask_wtf import FlaskForm
 from marshmallow import Schema, fields, pre_dump
 from wtforms import FloatField, IntegerField, StringField
 from wtforms.validators import AnyOf, DataRequired, Length, URL, NumberRange, Optional
-
+from internal.lib.helper import datetime_to_timestamp
 from internal.entity.dataset_entity import RetrievalStrategy
-from internal.model import Dataset
+from internal.model import Dataset, DatasetQuery
 from pkg.paginator import PaginatorReq
 
 
@@ -168,4 +168,24 @@ class GetDatasetsWithPageResp(Schema):
             "character_count": data.character_count,
             "updated_at": int(data.updated_at.timestamp()),
             "created_at": int(data.created_at.timestamp()),
+        }
+
+
+class GetDatasetQueriesResp(Schema):
+    """获取知识库最近查询响应结构"""
+
+    id = fields.UUID(dump_default="")
+    dataset_id = fields.UUID(dump_default="")
+    query = fields.String(dump_default="")
+    source = fields.String(dump_default="")
+    created_at = fields.Integer(dump_default=0)
+
+    @pre_dump
+    def process_data(self, data: DatasetQuery, **kwargs):
+        return {
+            "id": data.id,
+            "dataset_id": data.dataset_id,
+            "query": data.query,
+            "source": data.source,
+            "created_at": datetime_to_timestamp(data.created_at),
         }
