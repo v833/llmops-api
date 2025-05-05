@@ -3263,3 +3263,53 @@ WHERE document.dataset_id = %(dataset_id_1)s::UUID
 [2025-05-05 18:59:48,820.820] base.py -> _execute_context line:1843 [INFO]: [cached since 140.7s ago] {'coalesce_2': 0, 'dataset_id_1': UUID('46e14707-57d6-421e-8e6d-fff953592f2b')}
 [2025-05-05 18:59:48,821.821] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
 [2025-05-05 18:59:48,821.821] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 18:59:48] "GET /datasets HTTP/1.1" 200 -
+[2025-05-05 19:02:50,917.917] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 19:02:50,920.920] base.py -> _execute_context line:1843 [INFO]: SELECT api_tool_provider.id AS api_tool_provider_id, api_tool_provider.account_id AS api_tool_provider_account_id, api_tool_provider.name AS api_tool_provider_name, api_tool_provider.icon AS api_tool_provider_icon, api_tool_provider.description AS api_tool_provider_description, api_tool_provider.openapi_schema AS api_tool_provider_openapi_schema, api_tool_provider.headers AS api_tool_provider_headers, api_tool_provider.updated_at AS api_tool_provider_updated_at, api_tool_provider.created_at AS api_tool_provider_created_at 
+FROM api_tool_provider 
+WHERE api_tool_provider.account_id = %(account_id_1)s::UUID ORDER BY api_tool_provider.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-05 19:02:50,920.920] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00028s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-05 19:02:50,975.975] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT api_tool_provider.id AS id, api_tool_provider.account_id AS account_id, api_tool_provider.name AS name, api_tool_provider.icon AS icon, api_tool_provider.description AS description, api_tool_provider.openapi_schema AS openapi_schema, api_tool_provider.headers AS headers, api_tool_provider.updated_at AS updated_at, api_tool_provider.created_at AS created_at 
+FROM api_tool_provider 
+WHERE api_tool_provider.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-05 19:02:50,978.978] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00253s] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-05 19:02:50,985.985] base.py -> _execute_context line:1843 [INFO]: SELECT api_tool.id AS api_tool_id, api_tool.account_id AS api_tool_account_id, api_tool.provider_id AS api_tool_provider_id, api_tool.name AS api_tool_name, api_tool.description AS api_tool_description, api_tool.url AS api_tool_url, api_tool.method AS api_tool_method, api_tool.parameters AS api_tool_parameters, api_tool.updated_at AS api_tool_updated_at, api_tool.created_at AS api_tool_created_at 
+FROM api_tool 
+WHERE api_tool.provider_id = %(provider_id_1)s::UUID
+[2025-05-05 19:02:50,985.985] base.py -> _execute_context line:1843 [INFO]: [generated in 0.00022s] {'provider_id_1': UUID('d9e7c9a8-706a-46f1-9eaa-4c0f060be94a')}
+[2025-05-05 19:02:51,011.011] base.py -> _execute_context line:1843 [INFO]: SELECT api_tool.id AS api_tool_id, api_tool.account_id AS api_tool_account_id, api_tool.provider_id AS api_tool_provider_id, api_tool.name AS api_tool_name, api_tool.description AS api_tool_description, api_tool.url AS api_tool_url, api_tool.method AS api_tool_method, api_tool.parameters AS api_tool_parameters, api_tool.updated_at AS api_tool_updated_at, api_tool.created_at AS api_tool_created_at 
+FROM api_tool 
+WHERE api_tool.provider_id = %(provider_id_1)s::UUID
+[2025-05-05 19:02:51,011.011] base.py -> _execute_context line:1843 [INFO]: [cached since 0.02611s ago] {'provider_id_1': UUID('634fdfb2-9614-4138-97b4-c1040d1c4ab4')}
+[2025-05-05 19:02:51,013.013] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 19:02:51,014.014] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 19:02:51] "GET /api-tools?current_page=1&page_size=20&search_word= HTTP/1.1" 200 -
+[2025-05-05 19:07:34,931.931] base.py -> _connection_begin_impl line:2699 [INFO]: BEGIN (implicit)
+[2025-05-05 19:07:34,932.932] base.py -> _execute_context line:1843 [INFO]: SELECT api_tool_provider.id AS api_tool_provider_id, api_tool_provider.account_id AS api_tool_provider_account_id, api_tool_provider.name AS api_tool_provider_name, api_tool_provider.icon AS api_tool_provider_icon, api_tool_provider.description AS api_tool_provider_description, api_tool_provider.openapi_schema AS api_tool_provider_openapi_schema, api_tool_provider.headers AS api_tool_provider_headers, api_tool_provider.updated_at AS api_tool_provider_updated_at, api_tool_provider.created_at AS api_tool_provider_created_at 
+FROM api_tool_provider 
+WHERE api_tool_provider.account_id = %(account_id_1)s::UUID ORDER BY api_tool_provider.created_at DESC 
+ LIMIT %(param_1)s OFFSET %(param_2)s
+[2025-05-05 19:07:34,932.932] base.py -> _execute_context line:1843 [INFO]: [cached since 99.06s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479', 'param_1': 20, 'param_2': 0}
+[2025-05-05 19:07:34,934.934] base.py -> _execute_context line:1843 [INFO]: SELECT count(*) AS count_1 
+FROM (SELECT api_tool_provider.id AS id, api_tool_provider.account_id AS account_id, api_tool_provider.name AS name, api_tool_provider.icon AS icon, api_tool_provider.description AS description, api_tool_provider.openapi_schema AS openapi_schema, api_tool_provider.headers AS headers, api_tool_provider.updated_at AS updated_at, api_tool_provider.created_at AS created_at 
+FROM api_tool_provider 
+WHERE api_tool_provider.account_id = %(account_id_1)s::UUID) AS anon_1
+[2025-05-05 19:07:34,934.934] base.py -> _execute_context line:1843 [INFO]: [cached since 99s ago] {'account_id_1': 'f47ac10b-58cc-4372-a567-0e02b2c3d479'}
+[2025-05-05 19:07:34,936.936] base.py -> _execute_context line:1843 [INFO]: SELECT api_tool.id AS api_tool_id, api_tool.account_id AS api_tool_account_id, api_tool.provider_id AS api_tool_provider_id, api_tool.name AS api_tool_name, api_tool.description AS api_tool_description, api_tool.url AS api_tool_url, api_tool.method AS api_tool_method, api_tool.parameters AS api_tool_parameters, api_tool.updated_at AS api_tool_updated_at, api_tool.created_at AS api_tool_created_at 
+FROM api_tool 
+WHERE api_tool.provider_id = %(provider_id_1)s::UUID
+[2025-05-05 19:07:34,936.936] base.py -> _execute_context line:1843 [INFO]: [cached since 98.99s ago] {'provider_id_1': UUID('d9e7c9a8-706a-46f1-9eaa-4c0f060be94a')}
+[2025-05-05 19:07:34,937.937] base.py -> _execute_context line:1843 [INFO]: SELECT api_tool.id AS api_tool_id, api_tool.account_id AS api_tool_account_id, api_tool.provider_id AS api_tool_provider_id, api_tool.name AS api_tool_name, api_tool.description AS api_tool_description, api_tool.url AS api_tool_url, api_tool.method AS api_tool_method, api_tool.parameters AS api_tool_parameters, api_tool.updated_at AS api_tool_updated_at, api_tool.created_at AS api_tool_created_at 
+FROM api_tool 
+WHERE api_tool.provider_id = %(provider_id_1)s::UUID
+[2025-05-05 19:07:34,937.937] base.py -> _execute_context line:1843 [INFO]: [cached since 99s ago] {'provider_id_1': UUID('634fdfb2-9614-4138-97b4-c1040d1c4ab4')}
+[2025-05-05 19:07:34,939.939] base.py -> _connection_rollback_impl line:2702 [INFO]: ROLLBACK
+[2025-05-05 19:07:34,940.940] _internal.py -> _log line:97 [INFO]: 127.0.0.1 - - [05/May/2025 19:07:34] "GET /api-tools?current_page=1&page_size=20&search_word= HTTP/1.1" 200 -
+[2025-05-05 20:09:08,372.372] _internal.py -> _log line:97 [INFO]:  * Detected change in '/Users/wangqun/Desktop/ai/llmops/llmops-api/internal/router/router.py', reloading
+[2025-05-05 20:09:10,050.050] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 20:12:15,679.679] _internal.py -> _log line:97 [INFO]: [31m[1mWARNING: This is a development server. Do not use it in a production deployment. Use a production WSGI server instead.[0m
+ * Running on http://127.0.0.1:5000
+[2025-05-05 20:12:15,679.679] _internal.py -> _log line:97 [INFO]: [33mPress CTRL+C to quit[0m
+[2025-05-05 20:12:15,680.680] _internal.py -> _log line:97 [INFO]:  * Restarting with stat
+[2025-05-05 20:12:39,148.148] _internal.py -> _log line:97 [WARNING]:  * Debugger is active!
+[2025-05-05 20:12:39,170.170] _internal.py -> _log line:97 [INFO]:  * Debugger PIN: 129-308-032
