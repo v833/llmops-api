@@ -152,8 +152,8 @@ class AppHandler:
         return success_json({"content": content})
 
     def ping(self):
-        human_message = "你可以简单介绍下Agent吗?"
+        human_message = "你可以简单介绍下Agent吗?LLM与Agent有什么关联"
         ai_message = "Agent（智能代理） 是一种能够 自主感知环境、做出决策并执行动作 的智能系统，通常基于大语言模型（LLM）或规则引擎驱动。它的核心目标是 替代或辅助人类完成特定任务，例如回答问题、自动化流程、数据分析等。"
-        summary = self.conversation_service.summary(human_message, ai_message)
+        content = self.conversation_service.generate_suggested_questions(ai_message)
 
-        return success_json({"content": summary})
+        return success_json({"content": content})
