@@ -1,0 +1,2 @@
+class AgentQueueManager:
+    pass
