@@ -16,6 +16,9 @@ from internal.service.base_service import BaseService
 from pkg.sqlalchemy import SQLAlchemy
 import logging
 import json
+from dotenv import load_dotenv
+
+load_dotenv(override=True)
 
 
 @inject

@@ -1,7 +1,6 @@
 from internal.extension.module_extension import injector
 from internal.server import Http
 from internal.router import Router
-from injector import Injector
 from config import Config
 from pkg.sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
