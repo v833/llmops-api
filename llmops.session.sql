@@ -1,1 +1,0 @@
-SELECT * FROM api_tool_provider
