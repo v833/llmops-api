@@ -92,7 +92,7 @@ class FileExtractor:
             loader = (
                 UnstructuredFileLoader(file_path)
                 if is_unstructured
-                else TextLoader(file_path)
+                else TextLoader(file_path, encoding="utf-8")
             )
 
         # 3.返回加载的文档列表或者文本
