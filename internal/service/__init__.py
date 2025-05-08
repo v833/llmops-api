@@ -15,6 +15,7 @@ from .process_rule_service import ProcessRuleService
 from .segment_service import SegmentService
 from .retrieval_service import RetrievalService
 from .conversation_service import ConversationService
+from .jwt_service import JwtService
 
 __all__ = [
     "BuiltinToolService",
@@ -34,4 +35,5 @@ __all__ = [
     "SegmentService",
     "RetrievalService",
     "ConversationService",
+    "JwtService",
 ]

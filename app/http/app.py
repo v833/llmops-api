@@ -4,7 +4,9 @@ from internal.router import Router
 from config import Config
 from pkg.sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+import dotenv
 
+dotenv.load_dotenv()
 app = Http(
     __name__,
     config=Config(),
