@@ -1,5 +1,7 @@
 from dataclasses import dataclass
 from uuid import UUID
+
+from flask_login import login_required
 from internal.lib.helper import datetime_to_timestamp
 from injector import inject
 from sqlalchemy import desc
@@ -179,6 +181,7 @@ class DatasetService(BaseService):
 
         return dataset
 
+    @login_required
     def get_datasets_with_page(self, req: GetDatasetsWithPageReq):
         """根据传递的信息获取知识库列表分页数据"""
 

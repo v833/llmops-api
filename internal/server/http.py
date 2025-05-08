@@ -56,7 +56,7 @@ class Http(Flask):
             },
         )
 
-        self.before_request(middleware.request_loader)
+        login_manager.request_loader(middleware.request_loader)
 
         router.register_router(self)
 
