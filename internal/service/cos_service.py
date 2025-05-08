@@ -14,8 +14,7 @@ from internal.entity.upload_file_entity import (
 )
 from internal.exception.exception import FailException
 from internal.service import UploadFileService
-
-account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
+from internal.model import Account
 
 
 @inject
@@ -40,7 +39,7 @@ class CosService:
         """获取COS Bucket"""
         return os.getenv("COS_BUCKET")
 
-    def upload_file(self, file: FileStorage, only_image: bool = False):
+    def upload_file(self, file: FileStorage, only_image: bool, account: Account):
         """上传文件"""
 
         filename = file.filename
@@ -71,7 +70,7 @@ class CosService:
             raise FailException(f"上传文件失败: {str(e)}")
 
         return self.upload_file_service.create_upload_file(
-            account_id=account_id,
+            account_id=account.id,
             name=filename,
             key=upload_filename,
             size=len(file_content),

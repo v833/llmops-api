@@ -14,8 +14,6 @@ from .base_service import BaseService
 from .jieba_service import JiebaService
 from .vector_database_service import VectorDatabaseService
 
-account_id = "f47ac10b-58cc-4372-a567-0e02b2c3d479"
-
 
 @inject
 @dataclass
@@ -30,6 +28,7 @@ class RetrievalService(BaseService):
         self,
         dataset_ids: list[UUID],
         query: str,
+        account_id: UUID,
         retrieval_strategy: str = RetrievalStrategy.SEMANTIC,
         k: int = 4,
         score: float = 0,

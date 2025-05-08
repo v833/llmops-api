@@ -1,5 +1,13 @@
 from .app_schema import CompletionReq
-from .api_tool_schma import ValidateOpenAPISchemaReq, CreateApiToolReq
+from .api_tool_schma import (
+    ValidateOpenAPISchemaReq,
+    CreateApiToolReq,
+    GetApiToolProviderResp,
+    GetApiToolProvidersWithPageReq,
+    GetApiToolProvidersWithPageResp,
+    GetApiToolResp,
+    UpdateApiToolProviderReq,
+)
 from .schema import ListField
 from .upload_file_schema import UploadFileReq, UploadFileResp, UploadImageReq
 from .dataset_schema import (
@@ -35,4 +43,9 @@ __all__ = [
     "HitReq",
     "GetDatasetQueriesResp",
     "UpdateSegmentReq",
+    "GetApiToolProviderResp",
+    "GetApiToolProvidersWithPageReq",
+    "GetApiToolProvidersWithPageResp",
+    "GetApiToolResp",
+    "UpdateApiToolProviderReq",
 ]
