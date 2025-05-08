@@ -4,6 +4,8 @@ from internal.router import Router
 from config import Config
 from pkg.sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_login import LoginManager
+from internal.middleware import Middleware
 import dotenv
 
 dotenv.load_dotenv()
@@ -13,6 +15,8 @@ app = Http(
     db=injector.get(SQLAlchemy),
     migrate=injector.get(Migrate),
     router=injector.get(Router),
+    login_manager=injector.get(LoginManager),
+    middleware=injector.get(Middleware),
 )
 
 celery = app.extensions["celery"]

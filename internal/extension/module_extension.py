@@ -4,6 +4,8 @@ from pkg.sqlalchemy import SQLAlchemy
 from internal.extension import db, migrate
 from flask_migrate import Migrate
 from redis import Redis
+from flask_login import LoginManager
+from internal.extension.login_extension import login_manager
 
 
 class ExtensionModule(Module):
@@ -13,6 +15,7 @@ class ExtensionModule(Module):
         binder.bind(SQLAlchemy, to=db)
         binder.bind(Migrate, to=migrate)
         binder.bind(Redis, to=redis_client)
+        binder.bind(LoginManager, to=login_manager)
 
 
 injector = Injector([ExtensionModule])
