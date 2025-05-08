@@ -14,8 +14,7 @@ class JwtService:
     @classmethod
     def generate_token(cls, payload: dict[str, Any]) -> str:
         secret_key = os.getenv("JWT_SECRET_KEY")
-        jwt.encode(payload, secret_key, algorithm="HS256")
-        pass
+        return jwt.encode(payload, secret_key, algorithm="HS256")
 
     @classmethod
     def parse_token(cls, token: str) -> dict[str, Any]:

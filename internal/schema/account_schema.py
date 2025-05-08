@@ -1,4 +1,3 @@
-#!/usr/bin/env python
 from flask_wtf import FlaskForm
 from marshmallow import Schema, fields, pre_dump
 from wtforms import StringField
