@@ -86,6 +86,18 @@ class AppHandler:
 
         return success_message("更新应用草稿配置成功")
 
+    @login_required
+    def publish(self, app_id: UUID):
+        """根据传递的应用id发布/更新特定的草稿配置信息"""
+        self.app_service.publish_draft_app_config(app_id, current_user)
+        return success_message("发布/更新应用配置成功")
+
+    @login_required
+    def cancel_publish(self, app_id: UUID):
+        """根据传递的应用id，取消发布指定的应用配置信息"""
+        self.app_service.cancel_publish_app_config(app_id, current_user)
+        return success_message("取消发布应用配置成功")
+
     @classmethod
     def _load_memory_variables(cls, inputs, config: RunnableConfig):
         configurable = config.get("configurable", {})

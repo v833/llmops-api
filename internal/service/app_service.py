@@ -4,9 +4,11 @@ from typing import Any, List
 from datetime import datetime
 from injector import inject
 from flask import request
+from sqlalchemy import func
 
 from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
 from internal.exception.exception import (
+    FailException,
     ForbiddenException,
     NotFoundException,
     ValidateErrorException,
@@ -14,6 +16,7 @@ from internal.exception.exception import (
 from internal.lib.helper import datetime_to_timestamp
 from internal.model import App
 from internal.model.api_tool import ApiTool
+from internal.model.app import AppConfig, AppDatasetJoin
 from internal.model.dataset import Dataset
 from internal.service.base_service import BaseService
 from pkg.sqlalchemy import SQLAlchemy
@@ -248,6 +251,106 @@ class AppService(BaseService):
         )
 
         return draft_app_config_record
+
+    def publish_draft_app_config(self, app_id: uuid.UUID, account: Account) -> App:
+        """根据传递的应用id+账号，发布/更新指定的应用草稿配置为运行时配置"""
+        # 1.获取应用的信息以及草稿信息
+        app = self.get_app(app_id, account)
+        draft_app_config = self.get_draft_app_config(app_id, account)
+
+        # 2.创建应用运行配置（在这里暂时不删除历史的运行配置）
+        app_config = self.create(
+            AppConfig,
+            app_id=app_id,
+            model_config=draft_app_config["model_config"],
+            dialog_round=draft_app_config["dialog_round"],
+            preset_prompt=draft_app_config["preset_prompt"],
+            tools=[
+                {
+                    "type": tool["type"],
+                    "provider_id": tool["provider"]["id"],
+                    "tool_id": tool["tool"]["name"],
+                    "params": tool["tool"]["params"],
+                }
+                for tool in draft_app_config["tools"]
+            ],
+            # todo:工作流模块完成后该处可能有变动
+            workflows=draft_app_config["workflows"],
+            retrieval_config=draft_app_config["retrieval_config"],
+            long_term_memory=draft_app_config["long_term_memory"],
+            opening_statement=draft_app_config["opening_statement"],
+            opening_questions=draft_app_config["opening_questions"],
+            speech_to_text=draft_app_config["speech_to_text"],
+            text_to_speech=draft_app_config["text_to_speech"],
+            suggested_after_answer=draft_app_config["suggested_after_answer"],
+            review_config=draft_app_config["review_config"],
+        )
+
+        # 3.更新应用关联的运行时配置以及状态
+        self.update(app, app_config_id=app_config.id, status=AppStatus.PUBLISHED)
+
+        # 4.先删除原有的知识库关联记录
+        with self.db.auto_commit():
+            self.db.session.query(AppDatasetJoin).filter(
+                AppDatasetJoin.app_id == app_id,
+            ).delete()
+
+        # 5.新增新的知识库关联记录
+        for dataset in draft_app_config["datasets"]:
+            self.create(AppDatasetJoin, app_id=app_id, dataset_id=dataset["id"])
+
+        # 6.获取应用草稿记录，并移除id、version、config_type、updated_at、created_at字段
+        draft_app_config_copy = app.draft_app_config.__dict__.copy()
+        remove_fields = [
+            "id",
+            "version",
+            "config_type",
+            "updated_at",
+            "created_at",
+            "_sa_instance_state",
+        ]
+        for field in remove_fields:
+            draft_app_config_copy.pop(field)
+
+        # 7.获取当前最大的发布版本
+        max_version = (
+            self.db.session.query(func.coalesce(func.max(AppConfigVersion.version), 0))
+            .filter(
+                AppConfigVersion.app_id == app_id,
+                AppConfigVersion.config_type == AppConfigType.PUBLISHED,
+            )
+            .scalar()
+        )
+
+        # 8.新增发布历史配置
+        self.create(
+            AppConfigVersion,
+            version=max_version + 1,
+            config_type=AppConfigType.PUBLISHED,
+            **draft_app_config_copy,
+        )
+
+        return app
+
+    def cancel_publish_app_config(self, app_id: uuid.UUID, account: Account) -> App:
+        """根据传递的应用id+账号，取消发布指定的应用配置"""
+        # 1.获取应用信息并校验权限
+        app = self.get_app(app_id, account)
+
+        # 2.检测下当前应用的状态是否为已发布
+        if app.status != AppStatus.PUBLISHED:
+            raise FailException("当前应用未发布，请核实后重试")
+
+        # 3.修改账号的发布状态，并清空关联配置id
+        self.update(app, status=AppStatus.DRAFT, app_config_id=None)
+
+        # 4.删除应用关联的知识库信息
+        with self.db.auto_commit():
+            self.db.session.query(AppDatasetJoin).filter(
+                AppDatasetJoin.app_id == app_id,
+            ).delete()
+
+        return app
 
     def _validate_draft_app_config(
         self, draft_app_config: dict[str, Any], account: Account

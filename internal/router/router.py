@@ -56,6 +56,17 @@ class Router:
             view_func=self.app_handler.update_draft_app_config,
         )
 
+        bp.add_url_rule(
+            "/apps/<uuid:app_id>/publish",
+            methods=["POST"],
+            view_func=self.app_handler.publish,
+        )
+        bp.add_url_rule(
+            "/apps/<uuid:app_id>/cancel-publish",
+            methods=["POST"],
+            view_func=self.app_handler.cancel_publish,
+        )
+
         # 内置插件广场
         bp.add_url_rule(
             "/builtin-tools",
