@@ -8,6 +8,8 @@
 
 LLMOps API 是一个基于 Flask 的 API 服务，用于构建、管理和部署基于大语言模型的智能体应用。该项目集成了 LangGraph 和 LangChain，提供了一套完整的工具链，用于创建具有状态、多角色的智能体应用程序。
 
+前端仓库: https://github.com/v833/llmops-ui
+
 ## 功能特点
 
 - **智能体管理**：创建、配置和管理基于 LLM 的智能体
