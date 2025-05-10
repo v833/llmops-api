@@ -11,6 +11,7 @@ from internal.handler.upload_file_handler import UploadFileHandler
 from internal.handler.oauth_handler import OAuthHandler
 from internal.handler.account_handler import AccountHandler
 from internal.handler.auth_handler import AuthHandler
+from internal.handler.ai_handler import AIHandler
 
 
 @inject
@@ -28,6 +29,7 @@ class Router:
     oauth_handler: OAuthHandler
     account_handler: AccountHandler
     auth_handler: AuthHandler
+    ai_handler: AIHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -310,6 +312,18 @@ class Router:
             "/account/avatar",
             methods=["POST"],
             view_func=self.account_handler.update_avatar,
+        )
+
+        # AI辅助模块
+        bp.add_url_rule(
+            "/ai/optimize-prompt",
+            methods=["POST"],
+            view_func=self.ai_handler.optimize_prompt,
+        )
+        bp.add_url_rule(
+            "/ai/suggested-questions",
+            methods=["POST"],
+            view_func=self.ai_handler.generate_suggested_questions,
         )
 
         # 在应用上去注册蓝图
