@@ -17,6 +17,7 @@ from internal.lib.helper import datetime_to_timestamp
 from internal.model import App
 from internal.model.api_tool import ApiTool
 from internal.model.app import AppConfig, AppDatasetJoin
+from internal.model.conversation import Conversation
 from internal.model.dataset import Dataset
 from internal.service.base_service import BaseService
 from pkg.paginator.paginator import Paginator
@@ -419,6 +420,52 @@ class AppService(BaseService):
         )
 
         return draft_app_config_record
+
+    def get_debug_conversation_summary(
+        self, app_id: uuid.UUID, account: Account
+    ) -> str:
+        """根据传递的应用id+账号获取指定应用的调试会话长期记忆"""
+        # 1.获取应用信息并校验权限
+        app = self.get_app(app_id, account)
+
+        # 2.获取应用的草稿配置，并校验长期记忆是否启用
+        draft_app_config = self.get_draft_app_config(app_id, account)
+        if draft_app_config["long_term_memory"]["enable"] is False:
+            raise FailException("该应用并未开启长期记忆，无法获取")
+
+        return app.debug_conversation.summary
+
+    def update_debug_conversation_summary(
+        self, app_id: uuid.UUID, summary: str, account: Account
+    ) -> Conversation:
+        """根据传递的应用id+总结更新指定应用的调试长期记忆"""
+        # 1.获取应用信息并校验权限
+        app = self.get_app(app_id, account)
+
+        # 2.获取应用的草稿配置，并校验长期记忆是否启用
+        draft_app_config = self.get_draft_app_config(app_id, account)
+        if draft_app_config["long_term_memory"]["enable"] is False:
+            raise FailException("该应用并未开启长期记忆，无法获取")
+
+        # 3.更新应用长期记忆
+        debug_conversation = app.debug_conversation
+        self.update(debug_conversation, summary=summary)
+
+        return debug_conversation
+
+    def delete_debug_conversation(self, app_id: uuid.UUID, account: Account) -> App:
+        """根据传递的应用id，删除指定的应用调试会话"""
+        # 1.获取应用信息并校验权限
+        app = self.get_app(app_id, account)
+
+        # 2.判断是否存在debug_conversation_id这个数据，如果不存在表示没有会话，无需执行任何操作
+        if not app.debug_conversation_id:
+            return app
+
+        # 3.否则将debug_conversation_id的值重置为None
+        self.update(app, debug_conversation_id=None)
+
+        return app
 
     def _validate_draft_app_config(
         self, draft_app_config: dict[str, Any], account: Account

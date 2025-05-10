@@ -77,6 +77,16 @@ class Router:
             view_func=self.app_handler.fallback_history_to_draft,
         )
 
+        bp.add_url_rule(
+            "/apps/<uuid:app_id>/summary",
+            view_func=self.app_handler.get_debug_conversation_summary,
+        )
+        bp.add_url_rule(
+            "/apps/<uuid:app_id>/summary",
+            methods=["POST"],
+            view_func=self.app_handler.update_debug_conversation_summary,
+        )
+
         # 内置插件广场
         bp.add_url_rule(
             "/builtin-tools",
