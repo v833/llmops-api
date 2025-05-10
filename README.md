@@ -137,4 +137,4 @@ LLMOps API 深度集成了 LangGraph，支持构建具有状态、多角色的�
 
 ## 联系方式
 
-如有任何问题或建议，请通过 [issues](https://github.com/yourusername/llmops-api/issues) 联系我们。
+如有任何问题或建议，请通过 [issues](https://github.com/v833/llmops-api/issues) 联系我们。
