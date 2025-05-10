@@ -41,11 +41,6 @@ class VectorDatabaseService:
         """获取检索器"""
         return self.vector_store.as_retriever()
 
-    @classmethod
-    def combine_documents(cls, documents: list[Document]):
-        """将对应的文档列表使用换行符进行合并"""
-        return "\n\n".join([document.page_content for document in documents])
-
     @property
     def collection(self):
         return self.client.collections.get(COLLECTION_NAME)

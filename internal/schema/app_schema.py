@@ -17,16 +17,6 @@ from internal.model import App, AppConfigVersion, Message
 from pkg.paginator import PaginatorReq
 
 
-class CompletionReq(FlaskForm):
-    query = StringField(
-        "query",
-        validators=[
-            DataRequired(message="用户的提问是必填的"),
-            Length(max=2000, message="用户的提问长度在2000个字符以内"),
-        ],
-    )
-
-
 class CreateAppReq(FlaskForm):
     """创建Agent应用请求结构体"""
 

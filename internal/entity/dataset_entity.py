@@ -72,3 +72,4 @@ class RetrievalSource(str, Enum):
 
     HIT_TESTING = "hit_testing"
     APP = "app"
+    DEBUGGER = "debugger"

@@ -1,25 +1,21 @@
 import json
 import uuid
-import os
 from uuid import UUID
-from typing import Generator
 from dataclasses import dataclass
 from injector import inject
 from langchain_core.memory import BaseMemory
-from langchain_core.runnables import RunnablePassthrough, RunnableLambda, RunnableConfig
+from langchain_core.runnables import RunnableConfig
 from langchain_core.tracers import Run
-from langchain_openai import ChatOpenAI
 from langgraph.constants import END
 from redis import Redis
 
-from flask import request
-from internal.core.agent.agents import FunctionCallAgent
-from internal.core.agent.entities import AgentConfig
-from internal.core.agent.agents.agent_queue_manager import AgentQueueManager
+from flask import current_app, request
 from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
 from internal.schema.app_schema import (
-    CompletionReq,
+    DebugChatReq,
     FallbackHistoryToDraftReq,
+    GetDebugConversationMessagesWithPageReq,
+    GetDebugConversationMessagesWithPageResp,
     GetPublishHistoriesWithPageReq,
     GetPublishHistoriesWithPageResp,
     UpdateDebugConversationSummaryReq,
@@ -29,9 +25,9 @@ from internal.service import (
     VectorDatabaseService,
     ApiToolService,
 )
-from internal.entity.conversation_entity import InvokeFrom
 from internal.service.conversation_service import ConversationService
 
+from internal.service.retrieval_service import RetrievalService
 from pkg.paginator.paginator import PageModel
 from pkg.response import (
     success_json,
@@ -57,6 +53,7 @@ class AppHandler:
     builtin_provider_manager: BuiltinProviderManager
     conversation_service: ConversationService
     redis_client: Redis
+    retrieval_service: RetrievalService
 
     @login_required
     def create_app(self):
@@ -161,6 +158,51 @@ class AppHandler:
 
         return success_message("更新AI应用长期记忆成功")
 
+    @login_required
+    def delete_debug_conversation(self, app_id: UUID):
+        """根据传递的应用id，清空该应用的调试会话记录"""
+        self.app_service.delete_debug_conversation(app_id, current_user)
+        return success_message("清空应用调试会话记录成功")
+
+    @login_required
+    def debug_chat(self, app_id: UUID):
+        """根据传递的应用id+query，发起调试对话"""
+        # 1.提取数据并校验数据
+        req = DebugChatReq()
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        # 2.调用服务发起会话调试
+        response = self.app_service.debug_chat(app_id, req.query.data, current_user)
+
+        return compact_generate_response(response)
+
+    @login_required
+    def stop_debug_chat(self, app_id: UUID, task_id: UUID):
+        """根据传递的应用id+任务id停止某个应用的指定调试会话"""
+        self.app_service.stop_debug_chat(app_id, task_id, current_user)
+        return success_message("停止应用调试会话成功")
+
+    @login_required
+    def get_debug_conversation_messages_with_page(self, app_id: UUID):
+        """根据传递的应用id，获取该应用的调试会话分页列表记录"""
+        # 1.提取请求并校验数据
+        req = GetDebugConversationMessagesWithPageReq(request.args)
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        # 2.调用服务获取数据
+        messages, paginator = (
+            self.app_service.get_debug_conversation_messages_with_page(
+                app_id, req, current_user
+            )
+        )
+
+        # 3.创建响应结构
+        resp = GetDebugConversationMessagesWithPageResp(many=True)
+
+        return success_json(PageModel(list=resp.dump(messages), paginator=paginator))
+
     @classmethod
     def _load_memory_variables(cls, inputs, config: RunnableConfig):
         configurable = config.get("configurable", {})
@@ -185,68 +227,24 @@ class AppHandler:
 
     def debug(self, app_id: UUID):
         """应用会话调试聊天接口，该接口为流式事件输出"""
-        # 1.提取从接口中获取的输入，POST
-        req = CompletionReq()
-        if not req.validate():
-            return validate_error_json(req.errors)
-
-        # 2.定义工具列表
-        tools = [
-            self.builtin_provider_manager.get_tool("google", "google_serper")(),
-            self.builtin_provider_manager.get_tool("gaode", "gaode_weather")(),
-            self.builtin_provider_manager.get_tool("dalle", "dalle3")(),
-        ]
-
-        agent = FunctionCallAgent(
-            AgentConfig(
-                llm=ChatOpenAI(
-                    model=os.getenv("OPENAI_MODEL"), api_key=os.getenv("OPENAI_API_KEY")
-                ),
-                enable_long_term_memory=True,
-                tools=tools,
-            ),
-            AgentQueueManager(
-                user_id=uuid.uuid4(),
-                task_id=uuid.uuid4(),
-                invoke_from=InvokeFrom.DEBUGGER,
-                redis_client=self.redis_client,
-            ),
-        )
-
-        def stream_event_response() -> Generator:
-            """流式事件输出响应"""
-            for agent_queue_event in agent.run(req.query.data, [], "用户介绍自己叫wq"):
-                data = {
-                    "id": str(agent_queue_event.id),
-                    "task_id": str(agent_queue_event.task_id),
-                    "event": agent_queue_event.event,
-                    "thought": agent_queue_event.thought,
-                    "observation": agent_queue_event.observation,
-                    "tool": agent_queue_event.tool,
-                    "tool_input": agent_queue_event.tool_input,
-                    "answer": agent_queue_event.answer,
-                    "latency": agent_queue_event.latency,
-                }
-                yield f"event: {agent_queue_event.event}\ndata: {json.dumps(data)}\n\n"
-
-        return compact_generate_response(stream_event_response())
+        pass
 
     def ping(self):
-        from internal.core.agent.agents import FunctionCallAgent
-        from internal.core.agent.entities import AgentConfig
-        from langchain_openai import ChatOpenAI
+        from internal.entity.dataset_entity import RetrievalSource, RetrievalStrategy
 
-        agent = FunctionCallAgent(
-            AgentConfig(
-                llm=ChatOpenAI(
-                    model=os.getenv("OPENAI_MODEL"), api_key=os.getenv("OPENAI_API_KEY")
-                ),
-                preset_prompt="你是一个诗人,请根据用户输入的主题,创建一首诗",
-            )
+        dataset_retrieval = self.retrieval_service.create_langchain_tool_from_search(
+            flask_app=current_app._get_current_object(),
+            dataset_ids=["e422f257-0189-43b1-9a6a-6032ef8ea4b7"],
+            account_id=current_user.id,
+            retrieval_strategy=RetrievalStrategy.SEMANTIC,
+            k=4,
+            score=0.5,
+            retrival_source=RetrievalSource.DEBUGGER,
         )
 
-        state = agent.run("程序员", history=[], long_term_memory="")
+        print("工具名称", dataset_retrieval.name)
+        print("工具描述", dataset_retrieval.description)
+        print("工具参数", dataset_retrieval.args)
 
-        content = state["messages"][-1].content
-
+        content = dataset_retrieval.invoke("简单介绍下langchain的知识库检索功能")
         return success_json({"content": content})

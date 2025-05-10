@@ -1,5 +1,4 @@
 from .app_schema import (
-    CompletionReq,
     GetPublishHistoriesWithPageReq,
     GetPublishHistoriesWithPageResp,
     FallbackHistoryToDraftReq,
@@ -35,7 +34,6 @@ from .segment_schema import (
 )
 
 __all__ = [
-    "CompletionReq",
     "ValidateOpenAPISchemaReq",
     "ListField",
     "CreateApiToolReq",
