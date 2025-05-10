@@ -18,6 +18,14 @@ class QueueEvent(str, Enum):
     TIMEOUT = "timeout"  # 智能体超时事件
     PING = "ping"  # ping联通事件
 
+    def __str__(self) -> str:
+        """重写字符串转换方法，确保返回枚举值而不是枚举名称"""
+        return self.value
+
+    def __repr__(self) -> str:
+        """重写表示方法，确保在调试和日志中显示枚举值"""
+        return f"'{self.value}'"
+
 
 class AgentThought(BaseModel):
     """智能体推理观察输出内容"""
