@@ -4,7 +4,7 @@ from typing import Any, List
 from datetime import datetime
 from injector import inject
 from flask import request
-from sqlalchemy import func
+from sqlalchemy import desc, func
 
 from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
 from internal.exception.exception import (
@@ -19,8 +19,9 @@ from internal.model.api_tool import ApiTool
 from internal.model.app import AppConfig, AppDatasetJoin
 from internal.model.dataset import Dataset
 from internal.service.base_service import BaseService
+from pkg.paginator.paginator import Paginator
 from pkg.sqlalchemy import SQLAlchemy
-from internal.schema.app_schema import CreateAppReq
+from internal.schema.app_schema import CreateAppReq, GetPublishHistoriesWithPageReq
 from internal.model import Account, AppConfigVersion
 
 from internal.entity.app_entity import AppStatus, AppConfigType, DEFAULT_APP_CONFIG
@@ -351,6 +352,73 @@ class AppService(BaseService):
             ).delete()
 
         return app
+
+    def get_publish_histories_with_page(
+        self, app_id: uuid.UUID, req: GetPublishHistoriesWithPageReq, account: Account
+    ) -> tuple[list[AppConfigVersion], Paginator]:
+        """根据传递的应用id+请求数据，获取指定应用的发布历史配置列表信息"""
+        # 1.获取应用信息并校验权限
+        self.get_app(app_id, account)
+
+        # 2.构建分页器
+        paginator = Paginator(db=self.db, req=req)
+
+        # 3.执行分页并获取数据
+        app_config_versions = paginator.paginate(
+            self.db.session.query(AppConfigVersion)
+            .filter(
+                AppConfigVersion.app_id == app_id,
+                AppConfigVersion.config_type == AppConfigType.PUBLISHED,
+            )
+            .order_by(desc("version"))
+        )
+
+        return app_config_versions, paginator
+
+    def fallback_history_to_draft(
+        self,
+        app_id: uuid.UUID,
+        app_config_version_id: uuid.UUID,
+        account: Account,
+    ) -> AppConfigVersion:
+        """根据传递的应用id、历史配置版本id、账号信息，回退特定配置到草稿"""
+        # 1.校验应用权限并获取信息
+        app = self.get_app(app_id, account)
+
+        # 2.查询指定的历史版本配置id
+        app_config_version = self.get(AppConfigVersion, app_config_version_id)
+        if not app_config_version:
+            raise NotFoundException("该历史版本配置不存在，请核实后重试")
+
+        # 3.校验历史版本配置信息（剔除已删除的工具、知识库、工作流）
+        draft_app_config_dict = app_config_version.__dict__.copy()
+        remove_fields = [
+            "id",
+            "app_id",
+            "version",
+            "config_type",
+            "updated_at",
+            "created_at",
+            "_sa_instance_state",
+        ]
+        for field in remove_fields:
+            draft_app_config_dict.pop(field)
+
+        # 4.校验历史版本配置信息
+        draft_app_config_dict = self._validate_draft_app_config(
+            draft_app_config_dict, account
+        )
+
+        # 5.更新草稿配置信息
+        draft_app_config_record = app.draft_app_config
+        self.update(
+            draft_app_config_record,
+            # todo:更新时间补丁信息
+            updated_at=datetime.now(),
+            **draft_app_config_dict,
+        )
+
+        return draft_app_config_record
 
     def _validate_draft_app_config(
         self, draft_app_config: dict[str, Any], account: Account

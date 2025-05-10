@@ -83,8 +83,6 @@ class GetAppResp(Schema):
 class GetPublishHistoriesWithPageReq(PaginatorReq):
     """获取应用发布历史配置分页列表请求"""
 
-    pass
-
 
 class GetPublishHistoriesWithPageResp(Schema):
     """获取应用发布历史配置列表分页数据"""
