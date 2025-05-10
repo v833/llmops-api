@@ -1,4 +1,13 @@
-from .app_schema import CompletionReq
+from .app_schema import (
+    CompletionReq,
+    GetPublishHistoriesWithPageReq,
+    GetPublishHistoriesWithPageResp,
+    FallbackHistoryToDraftReq,
+    UpdateDebugConversationSummaryReq,
+    DebugChatReq,
+    GetDebugConversationMessagesWithPageReq,
+    GetDebugConversationMessagesWithPageResp,
+)
 from .api_tool_schma import (
     ValidateOpenAPISchemaReq,
     CreateApiToolReq,
@@ -48,4 +57,11 @@ __all__ = [
     "GetApiToolProvidersWithPageResp",
     "GetApiToolResp",
     "UpdateApiToolProviderReq",
+    "GetPublishHistoriesWithPageReq",
+    "GetPublishHistoriesWithPageResp",
+    "FallbackHistoryToDraftReq",
+    "UpdateDebugConversationSummaryReq",
+    "DebugChatReq",
+    "GetDebugConversationMessagesWithPageReq",
+    "GetDebugConversationMessagesWithPageResp",
 ]

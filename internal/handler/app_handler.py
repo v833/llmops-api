@@ -5,19 +5,14 @@ from uuid import UUID
 from typing import Generator
 from dataclasses import dataclass
 from injector import inject
-from langchain.memory import ConversationBufferWindowMemory
-from langchain_community.chat_message_histories import FileChatMessageHistory
-from langchain_core.documents import Document
 from langchain_core.memory import BaseMemory
-from langchain_core.messages import BaseMessage, ToolMessage
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_core.runnables import RunnablePassthrough, RunnableLambda, RunnableConfig
 from langchain_core.tracers import Run
 from langchain_openai import ChatOpenAI
 from langgraph.constants import END
 from redis import Redis
 
+from flask import request
 from internal.core.agent.agents import FunctionCallAgent
 from internal.core.agent.entities import AgentConfig
 from internal.core.agent.agents.agent_queue_manager import AgentQueueManager
@@ -37,8 +32,9 @@ from pkg.response import (
     success_message,
 )
 import dotenv
-
+from flask_login import login_required, current_user
 from pkg.response.response import compact_generate_response
+from internal.schema.app_schema import CreateAppReq, GetAppResp
 
 dotenv.load_dotenv()
 
@@ -55,28 +51,33 @@ class AppHandler:
     conversation_service: ConversationService
     redis_client: Redis
 
+    @login_required
     def create_app(self):
         """调用服务创建新的APP记录"""
-        app = self.app_service.create_app()
-        return success_message(f"应用已经成功创建，id为{app.id}")
 
-    def get_app(self, id: uuid.UUID):
-        app = self.app_service.get_app(id)
-        return success_message(f"应用已经成功获取，名字是{app.name}")
+        req = CreateAppReq()
+        if not req.validate():
+            return validate_error_json(req.errors)
 
-    def get_all_app(self):
-        apps = self.app_service.get_all_app()
-        return success_message(
-            f"应用已经成功获取，列表是{[(str(app.id), app.name) for app in apps]}"
-        )
+        app = self.app_service.create_app(req, current_user)
+        return success_json({"id": app.id})
 
-    def update_app(self, id: uuid.UUID):
-        app = self.app_service.update_app(id)
-        return success_message(f"应用已经成功修改，修改的名字是:{app.name}")
+    @login_required
+    def get_app(self, app_id: uuid.UUID):
+        """获取指定的应用基础信息"""
+        app = self.app_service.get_app(app_id, current_user)
+        resp = GetAppResp()
+        return success_json(resp.dump(app))
 
-    def delete_app(self, id: uuid.UUID):
-        app = self.app_service.delete_app(id)
-        return success_message(f"应用已经成功删除，id为:{app.id}")
+    @login_required
+    def get_draft_app_config(self, app_id: UUID):
+        """根据传递的应用id获取应用的最新草稿配置"""
+        pass
+
+    @login_required
+    def update_draft_app_config(self, app_id: UUID):
+        """根据传递的应用id+草稿配置更新应用的最新草稿配置"""
+        pass
 
     @classmethod
     def _load_memory_variables(cls, inputs, config: RunnableConfig):

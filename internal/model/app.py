@@ -21,7 +21,6 @@ class App(db.Model):
 
     __tablename__ = "app"
     __table_args__ = (PrimaryKeyConstraint("id", name="pk_app_id"),)
-
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     account_id = Column(UUID, nullable=False)  # 创建账号id
     app_config_id = Column(UUID, nullable=True)  # 发布配置id，当值为空时代表没有发布

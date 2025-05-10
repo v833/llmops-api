@@ -42,17 +42,18 @@ class Router:
             view_func=self.app_handler.debug,
         )
         bp.add_url_rule(
-            "/app", methods=["POST", "OPTIONS"], view_func=self.app_handler.create_app
+            "/apps", methods=["POST", "OPTIONS"], view_func=self.app_handler.create_app
         )
-        bp.add_url_rule("/app", methods=["GET"], view_func=self.app_handler.get_all_app)
-        bp.add_url_rule("/app/<uuid:id>", view_func=self.app_handler.get_app)
+        bp.add_url_rule("/apps/<uuid:app_id>", view_func=self.app_handler.get_app)
+
         bp.add_url_rule(
-            "/app/<uuid:id>", methods=["POST"], view_func=self.app_handler.update_app
+            "/apps/<uuid:app_id>/draft-app-config",
+            view_func=self.app_handler.get_draft_app_config,
         )
         bp.add_url_rule(
-            "/app/<uuid:id>/delete",
+            "/apps/<uuid:app_id>/draft-app-config",
             methods=["POST"],
-            view_func=self.app_handler.delete_app,
+            view_func=self.app_handler.update_draft_app_config,
         )
 
         # 内置插件广场
