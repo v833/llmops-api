@@ -72,12 +72,19 @@ class AppHandler:
     @login_required
     def get_draft_app_config(self, app_id: UUID):
         """根据传递的应用id获取应用的最新草稿配置"""
-        pass
+        draft_config = self.app_service.get_draft_app_config(app_id, current_user)
+        return success_json(draft_config)
 
     @login_required
     def update_draft_app_config(self, app_id: UUID):
         """根据传递的应用id+草稿配置更新应用的最新草稿配置"""
-        pass
+        # 1.获取草稿请求json数据
+        draft_app_config = request.get_json(force=True, silent=True) or {}
+
+        # 2.调用服务更新应用的草稿配置
+        self.app_service.update_draft_app_config(app_id, draft_app_config, current_user)
+
+        return success_message("更新应用草稿配置成功")
 
     @classmethod
     def _load_memory_variables(cls, inputs, config: RunnableConfig):
