@@ -12,6 +12,7 @@ from internal.handler.oauth_handler import OAuthHandler
 from internal.handler.account_handler import AccountHandler
 from internal.handler.auth_handler import AuthHandler
 from internal.handler.ai_handler import AIHandler
+from internal.handler.api_key_handler import ApiKeyHandler
 
 
 @inject
@@ -30,6 +31,7 @@ class Router:
     account_handler: AccountHandler
     auth_handler: AuthHandler
     ai_handler: AIHandler
+    api_key_handler: ApiKeyHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -324,6 +326,31 @@ class Router:
             "/ai/suggested-questions",
             methods=["POST"],
             view_func=self.ai_handler.generate_suggested_questions,
+        )
+
+        # API秘钥模块
+        bp.add_url_rule(
+            "/openapi/api-keys", view_func=self.api_key_handler.get_api_keys_with_page
+        )
+        bp.add_url_rule(
+            "/openapi/api-keys",
+            methods=["POST"],
+            view_func=self.api_key_handler.create_api_key,
+        )
+        bp.add_url_rule(
+            "/openapi/api-keys/<uuid:api_key_id>",
+            methods=["POST"],
+            view_func=self.api_key_handler.update_api_key,
+        )
+        bp.add_url_rule(
+            "/openapi/api-keys/<uuid:api_key_id>/is-active",
+            methods=["POST"],
+            view_func=self.api_key_handler.update_api_key_is_active,
+        )
+        bp.add_url_rule(
+            "/openapi/api-keys/<uuid:api_key_id>/delete",
+            methods=["POST"],
+            view_func=self.api_key_handler.delete_api_key,
         )
 
         # 在应用上去注册蓝图

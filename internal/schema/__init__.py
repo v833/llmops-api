@@ -32,6 +32,12 @@ from .segment_schema import (
     GetSegmentsWithPageResp,
     UpdateSegmentReq,
 )
+from .api_key_schema import (
+    CreateApiKeyReq,
+    UpdateApiKeyReq,
+    UpdateApiKeyIsActiveReq,
+    GetApiKeysWithPageResp,
+)
 
 __all__ = [
     "ValidateOpenAPISchemaReq",
@@ -62,4 +68,8 @@ __all__ = [
     "DebugChatReq",
     "GetDebugConversationMessagesWithPageReq",
     "GetDebugConversationMessagesWithPageResp",
+    "CreateApiKeyReq",
+    "UpdateApiKeyReq",
+    "UpdateApiKeyIsActiveReq",
+    "GetApiKeysWithPageResp",
 ]
