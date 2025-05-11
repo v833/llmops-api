@@ -42,6 +42,12 @@ from .api_key_schema import (
     GetApiKeysWithPageResp,
 )
 
+from .builtin_app_schema import (
+    GetBuiltinAppCategoriesResp,
+    GetBuiltinAppsResp,
+    AddBuiltinAppToSpaceReq,
+)
+
 __all__ = [
     "ValidateOpenAPISchemaReq",
     "ListField",
@@ -78,4 +84,7 @@ __all__ = [
     "UpdateAppReq",
     "GetAppsWithPageReq",
     "GetAppsWithPageResp",
+    "GetBuiltinAppCategoriesResp",
+    "GetBuiltinAppsResp",
+    "AddBuiltinAppToSpaceReq",
 ]
