@@ -4,6 +4,8 @@ from typing import Any
 
 from pydantic import BaseModel, Field
 
+from internal.core.workflow.entites.variable_entity import VariableEntity
+
 
 class NodeType(str, Enum):
     """节点类型枚举"""
@@ -22,7 +24,13 @@ class BaseNodeData(BaseModel):
     id: UUID
     title: str = ""
     description: str = ""
+
+    class Config:
+        allow_population_by_field_name = True  # 允许通过字段名进行赋值
+
     node_type: NodeType
+    inputs: list[VariableEntity] = Field(default_factory=list)
+    outputs: list[VariableEntity] = Field(default_factory=list)
 
 
 class NodeStatus(str, Enum):

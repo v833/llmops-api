@@ -378,10 +378,6 @@ class AppHandler:
                 "info": {
                     "name": workflow.name,
                     "description": workflow.description,
-                    "args_schema": workflow.args_schema.model_json_schema(),
                 },
-                "node_reuslts": [
-                    node_result.dict() for node_result in result["node_results"]
-                ],
             }
         )

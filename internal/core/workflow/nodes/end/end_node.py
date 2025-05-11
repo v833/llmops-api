@@ -1,4 +1,8 @@
-from internal.core.workflow.entites.node_entity import NodeResult, NodeStatus
+from internal.core.workflow.entites.node_entity import (
+    BaseNodeData,
+    NodeResult,
+    NodeStatus,
+)
 from internal.core.workflow.entites.variable_entity import (
     VARIABLE_TYPE_DEFAULT_VALUE_MAP,
     VariableValueType,
@@ -9,7 +13,7 @@ from internal.core.workflow.nodes.end.end_entity import EndNodeData
 
 
 class EndNode(BaseNode):
-    _node_data_cls = EndNodeData
+    node_data: BaseNodeData
 
     def invoke(self, state: WorkflowState, config=None, **kwargs) -> WorkflowState:
         outputs = self.node_data.outputs

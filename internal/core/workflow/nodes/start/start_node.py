@@ -1,4 +1,8 @@
-from internal.core.workflow.entites.node_entity import NodeResult, NodeStatus
+from internal.core.workflow.entites.node_entity import (
+    BaseNodeData,
+    NodeResult,
+    NodeStatus,
+)
 from internal.core.workflow.entites.variable_entity import (
     VARIABLE_TYPE_DEFAULT_VALUE_MAP,
 )
@@ -10,7 +14,7 @@ from internal.exception.exception import FailException
 
 
 class StartNode(BaseNode):
-    _node_data_cls = StartNodeData
+    node_data: BaseNodeData
 
     def invoke(self, state: WorkflowState, config=None, **kwargs) -> WorkflowState:
         inputs = self.node_data.inputs

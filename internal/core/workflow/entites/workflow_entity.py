@@ -2,7 +2,7 @@ from typing import Any, Annotated, TypedDict
 
 from pydantic import BaseModel, Field
 
-from internal.core.workflow.entites.node_entity import NodeResult
+from internal.core.workflow.entites.node_entity import BaseNodeData, NodeResult
 
 
 def _process_dict(left: dict[str, Any], right: dict[str, Any]) -> dict[str, Any]:
@@ -24,7 +24,7 @@ def _process_node_results(
 class WorkflowConfig(BaseModel):
     name: str = "工作流名称, 必须是英文"
     description: str = "工作流描述, 用户告知LLM什么时候需要调用工作流"
-    nodes: list[dict[str, Any]] = Field(default_factory=list)
+    nodes: list[BaseNodeData] = Field(default_factory=list)
     edges: list[dict[str, Any]] = Field(default_factory=list)
 
 

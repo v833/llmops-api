@@ -1,4 +1,4 @@
-from typing import Optional, Iterator
+from typing import Any, Optional, Iterator
 from langchain_core.runnables import RunnableConfig
 from langchain_core.runnables.utils import Input, Output
 from langchain_core.tools import BaseTool
@@ -24,6 +24,7 @@ class Workflow(BaseTool):
         super().__init__(
             name=workflow_config.name,
             description=workflow_config.description,
+            args_schema=self._build_args_schema(workflow_config),
             **kwargs,
         )
 
@@ -73,14 +74,15 @@ class Workflow(BaseTool):
         edges = self._workflow_config.edges
 
         for node in nodes:
-            if node.get("node_type") == NodeType.START:
+            node_flag = f"{node.node_type.value}_{node.id}"
+            if node.node_type == NodeType.START:
                 graph.add_node(
-                    f"{NodeType.START}_{node.get('id')}",
+                    node_flag,
                     NodeClasses[NodeType.START](node_data=node),
                 )
-            elif node.get("node_type") == NodeType.END:
+            elif node.node_type == NodeType.END:
                 graph.add_node(
-                    f"{NodeType.END}_{node.get('id')}",
+                    node_flag,
                     NodeClasses[NodeType.END](node_data=node),
                 )
             else:
