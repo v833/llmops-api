@@ -274,21 +274,15 @@ class AppHandler:
         pass
 
     def ping(self):
-        from internal.entity.dataset_entity import RetrievalSource, RetrievalStrategy
+        from internal.core.workflow import Workflow
+        from internal.core.workflow.entites.workflow_entity import WorkflowConfig
 
-        dataset_retrieval = self.retrieval_service.create_langchain_tool_from_search(
-            flask_app=current_app._get_current_object(),
-            dataset_ids=["e422f257-0189-43b1-9a6a-6032ef8ea4b7"],
-            account_id=current_user.id,
-            retrieval_strategy=RetrievalStrategy.SEMANTIC,
-            k=4,
-            score=0.5,
-            retrival_source=RetrievalSource.DEBUGGER,
+        workflow = Workflow(
+            WorkflowConfig(
+                name="test",
+                description="test",
+                nodes=[],
+                edges=[],
+            )
         )
-
-        print("工具名称", dataset_retrieval.name)
-        print("工具描述", dataset_retrieval.description)
-        print("工具参数", dataset_retrieval.args)
-
-        content = dataset_retrieval.invoke("简单介绍下langchain的知识库检索功能")
-        return success_json({"content": content})
+        return success_message(workflow.invoke({"query": "hello"}))

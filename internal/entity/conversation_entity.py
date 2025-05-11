@@ -52,14 +52,6 @@ class ConversationInfo(BaseModel):
     }
 
     示例3:
-    用户输入: www.imooc.com讲了什么
-    {
-        "language_type": "用户输入是中英文混合",
-        "reasoning": "英文部分是URL，主要意图还是使用中文表达的，所以输出语言必须是中文",
-        "subject": "询问网站www.imooc.com"
-    }
-
-    示例4:
     用户输入: why小红的年龄is老than小明?
     {
         "language_type": "用户输入是中英文混合",
@@ -67,7 +59,7 @@ class ConversationInfo(BaseModel):
         "subject": "询问小红和小明的年龄"
     }
 
-    示例5:
+    示例4:
     用户输入: yo, 你今天怎么样?
     {
         "language_type": "用户输入是中英文混合",
