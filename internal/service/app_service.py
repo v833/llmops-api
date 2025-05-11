@@ -46,6 +46,7 @@ from internal.schema.app_schema import (
 from internal.model import App, Account, AppConfigVersion, Message
 
 from internal.entity.app_entity import AppStatus, AppConfigType, DEFAULT_APP_CONFIG
+from .app_config_service import AppConfigService
 
 
 @inject
@@ -59,6 +60,7 @@ class AppService(BaseService):
     retrieval_service: RetrievalService
     api_provider_manager: ApiProviderManager
     builtin_provider_manager: BuiltinProviderManager
+    app_config_service: AppConfigService
 
     def create_app(self, req: CreateAppReq, account: Account) -> App:
         with self.db.auto_commit():
@@ -116,143 +118,7 @@ class AppService(BaseService):
 
         app = self.get_app(app_id, account)
 
-        draft_app_config = app.draft_app_config
-
-        # todo.校验model_config配置信息，等待多LLM实现的时候再来完成
-        draft_tools = draft_app_config.tools
-        validate_tools = []
-        tools = []
-        for draft_tool in draft_tools:
-            if draft_tool["type"] == "builtin_tool":
-                provider = self.builtin_provider_manager.get_provider(
-                    draft_tool["provider_id"]
-                )
-                if not provider:
-                    continue
-
-                tool_entity = provider.get_tool_entity(draft_tool["tool_id"])
-                if not tool_entity:
-                    continue
-
-                param_keys = set([param.name for param in tool_entity.params])
-                params = draft_tool["params"]
-                if set(draft_tool["params"].keys()) - param_keys:
-                    params = {
-                        param.name: param.default
-                        for param in tool_entity.params
-                        if param.default is not None
-                    }
-                validate_tools.append({**draft_tool, "params": params})
-
-                provider_entity = provider.provider_entity
-                tools.append(
-                    {
-                        "type": "builtin_tool",
-                        "provider": {
-                            "id": provider_entity.name,
-                            "name": provider_entity.name,
-                            "label": provider_entity.label,
-                            "icon": f"{request.scheme}://{request.host}/builtin-tools/{provider_entity.name}/icon",
-                            "description": provider_entity.description,
-                        },
-                        "tool": {
-                            "id": tool_entity.name,
-                            "name": tool_entity.name,
-                            "label": tool_entity.label,
-                            "description": tool_entity.description,
-                            "params": draft_tool["params"],
-                        },
-                    }
-                )
-            elif draft_tool["type"] == "api_tool":
-
-                tool_record = (
-                    self.db.session.query(ApiTool)
-                    .filter(
-                        ApiTool.provider_id == draft_tool["provider_id"],
-                        ApiTool.name == draft_tool["tool_id"],
-                    )
-                    .one_or_none()
-                )
-                if not tool_record:
-                    continue
-
-                validate_tools.append(draft_tool)
-
-                provider = tool_record.provider
-                tools.append(
-                    {
-                        "type": "api_tool",
-                        "provider": {
-                            "id": str(provider.id),
-                            "name": provider.name,
-                            "label": provider.name,
-                            "icon": provider.icon,
-                            "description": provider.description,
-                        },
-                        "tool": {
-                            "id": str(tool_record.id),
-                            "name": tool_record.name,
-                            "label": tool_record.name,
-                            "description": tool_record.description,
-                            "params": {},
-                        },
-                    }
-                )
-
-        if draft_tools != validate_tools:
-            self.update(draft_app_config, tools=validate_tools)
-
-        datasets = []
-        draft_datasets = draft_app_config.datasets
-        dataset_records = (
-            self.db.session.query(Dataset).filter(Dataset.id.in_(draft_datasets)).all()
-        )
-        dataset_dict = {
-            str(dataset_record.id): dataset_record for dataset_record in dataset_records
-        }
-        dataset_sets = set(dataset_dict.keys())
-
-        exist_dataset_ids = [
-            dataset_id for dataset_id in draft_datasets if dataset_id in dataset_sets
-        ]
-
-        if set(exist_dataset_ids) != set(draft_datasets):
-            self.update(draft_app_config, datasets=exist_dataset_ids)
-
-        for dataset_id in exist_dataset_ids:
-            dataset = dataset_dict.get(str(dataset_id))
-            datasets.append(
-                {
-                    "id": str(dataset.id),
-                    "name": dataset.name,
-                    "icon": dataset.icon,
-                    "description": dataset.description,
-                }
-            )
-
-        # todo 校验工作流列表对应的数据
-        workflows = []
-
-        return {
-            "id": str(draft_app_config.id),
-            "model_config": draft_app_config.model_config,
-            "dialog_round": draft_app_config.dialog_round,
-            "preset_prompt": draft_app_config.preset_prompt,
-            "tools": tools,
-            "workflows": workflows,
-            "datasets": datasets,
-            "retrieval_config": draft_app_config.retrieval_config,
-            "long_term_memory": draft_app_config.long_term_memory,
-            "opening_statement": draft_app_config.opening_statement,
-            "opening_questions": draft_app_config.opening_questions,
-            "speech_to_text": draft_app_config.speech_to_text,
-            "text_to_speech": draft_app_config.text_to_speech,
-            "suggested_after_answer": draft_app_config.suggested_after_answer,
-            "review_config": draft_app_config.review_config,
-            "updated_at": datetime_to_timestamp(draft_app_config.updated_at),
-            "created_at": datetime_to_timestamp(draft_app_config.created_at),
-        }
+        return self.app_config_service.get_draft_app_config(app)
 
     def update_draft_app_config(
         self,
@@ -507,6 +373,7 @@ class AppService(BaseService):
             Message,
             app_id=app_id,
             conversation_id=debug_conversation.id,
+            invoke_from=InvokeFrom.DEBUGGER,
             created_by=account.id,
             query=query,
             status=MessageStatus.NORMAL,
@@ -529,34 +396,9 @@ class AppService(BaseService):
 
         # 7.将草稿配置中的tools转换成LangChain工具
         tools = []
-        for tool in draft_app_config["tools"]:
-            # 8.根据不同的工具类型执行不同的操作
-            if tool["type"] == "builtin_tool":
-                # 9.内置工具，通过builtin_provider_manager获取工具实例
-                builtin_tool = self.builtin_provider_manager.get_tool(
-                    tool["provider"]["id"], tool["tool"]["name"]
-                )
-                if not builtin_tool:
-                    continue
-                tools.append(builtin_tool(**tool["tool"]["params"]))
-            else:
-                # 10.API工具，首先根据id找到ApiTool记录，然后创建示例
-                api_tool = self.get(ApiTool, tool["tool"]["id"])
-                if not api_tool:
-                    continue
-                tools.append(
-                    self.api_provider_manager.get_tool(
-                        ToolEntity(
-                            id=str(api_tool.id),
-                            name=api_tool.name,
-                            url=api_tool.url,
-                            method=api_tool.method,
-                            description=api_tool.description,
-                            headers=api_tool.provider.headers,
-                            parameters=api_tool.parameters,
-                        )
-                    )
-                )
+        tools = self.app_config_service.get_langchain_tools_by_tools_config(
+            draft_app_config["tools"]
+        )
 
         # 11.检测是否关联了知识库
         if draft_app_config["datasets"]:
@@ -603,55 +445,38 @@ class AppService(BaseService):
                 if agent_thought.event == QueueEvent.AGENT_MESSAGE:
                     if event_id not in agent_thoughts:
                         # 19.初始化智能体消息事件
-                        agent_thoughts[event_id] = {
-                            "id": event_id,
-                            "task_id": str(agent_thought.task_id),
-                            "event": agent_thought.event,
-                            "thought": agent_thought.thought,
-                            "observation": agent_thought.observation,
-                            "tool": agent_thought.tool,
-                            "tool_input": agent_thought.tool_input,
-                            "message": agent_thought.message,
-                            "answer": agent_thought.answer,
-                            "latency": agent_thought.latency,
-                        }
+                        agent_thoughts[event_id] = agent_thought
                     else:
                         # 20.叠加智能体消息
-                        agent_thoughts[event_id] = {
-                            **agent_thoughts[event_id],
-                            "thought": agent_thoughts[event_id]["thought"]
-                            + agent_thought.thought,
-                            "answer": agent_thoughts[event_id]["answer"]
-                            + agent_thought.answer,
-                            "latency": agent_thought.latency,
-                        }
+                        agent_thoughts[event_id] = agent_thoughts[event_id].model_copy(
+                            update={
+                                "thought": agent_thoughts[event_id].thought
+                                + agent_thought.thought,
+                                "answer": agent_thoughts[event_id].answer
+                                + agent_thought.answer,
+                                "latency": agent_thought.latency,
+                            }
+                        )
                 else:
                     # 21.处理其他类型事件的消息
-                    agent_thoughts[event_id] = {
-                        "id": event_id,
-                        "task_id": str(agent_thought.task_id),
-                        "event": agent_thought.event,
-                        "thought": agent_thought.thought,
-                        "observation": agent_thought.observation,
-                        "tool": agent_thought.tool,
-                        "tool_input": agent_thought.tool_input,
-                        "message": agent_thought.message,
-                        "answer": agent_thought.answer,
-                        "latency": agent_thought.latency,
-                    }
+                    agent_thoughts[event_id] = agent_thought
 
             data = {
+                **agent_thought.model_dump(
+                    include={
+                        "event",
+                        "thought",
+                        "observation",
+                        "tool",
+                        "tool_input",
+                        "answer",
+                        "latency",
+                    }
+                ),
                 "id": event_id,
                 "conversation_id": str(debug_conversation.id),
                 "message_id": str(message.id),
                 "task_id": str(agent_thought.task_id),
-                "event": agent_thought.event,
-                "thought": agent_thought.thought,
-                "observation": agent_thought.observation,
-                "tool": agent_thought.tool,
-                "tool_input": agent_thought.tool_input,
-                "answer": agent_thought.answer,
-                "latency": agent_thought.latency,
             }
             yield f"event: {agent_thought.event}\ndata:{json.dumps(data)}\n\n"
 
