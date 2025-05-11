@@ -158,6 +158,16 @@ class AppService(BaseService):
         remove_fields(app_dict, app_remove_fields)
         remove_fields(draft_app_config_dict, draft_app_config_remove_fields)
 
+        current_time = datetime.utcnow()
+
+        app_dict["id"] = uuid.uuid4()
+        app_dict["update_at"] = current_time
+        app_dict["created_at"] = current_time
+
+        draft_app_config_dict["id"] = uuid.uuid4()
+        draft_app_config_dict["update_at"] = current_time
+        draft_app_config_dict["created_at"] = current_time
+
         # 4.开启数据库自动提交上下文
         with self.db.auto_commit():
             # 5.创建一个新的应用记录
