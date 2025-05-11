@@ -6,6 +6,7 @@ from .app_schema import (
     DebugChatReq,
     GetDebugConversationMessagesWithPageReq,
     GetDebugConversationMessagesWithPageResp,
+    UpdateAppReq,
 )
 from .api_tool_schma import (
     ValidateOpenAPISchemaReq,
@@ -72,4 +73,5 @@ __all__ = [
     "UpdateApiKeyReq",
     "UpdateApiKeyIsActiveReq",
     "GetApiKeysWithPageResp",
+    "UpdateAppReq",
 ]
