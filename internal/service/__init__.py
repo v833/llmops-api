@@ -20,6 +20,8 @@ from .account_service import AccountService
 from .oauth_service import OAuthService
 from .ai_service import AIService
 from .api_key_service import ApiKeyService
+from .app_config_service import AppConfigService
+from .openapi_service import OpenAPIService
 
 __all__ = [
     "BuiltinToolService",
@@ -44,4 +46,6 @@ __all__ = [
     "OAuthService",
     "AIService",
     "ApiKeyService",
+    "AppConfigService",
+    "OpenAPIService",
 ]

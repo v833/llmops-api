@@ -657,7 +657,7 @@ class AppService(BaseService):
 
         # 22.将消息以及推理过程添加到数据库
         thread = Thread(
-            target=self._save_agent_thoughts,
+            target=self.conversation_service.save_agent_thoughts,
             kwargs={
                 "flask_app": current_app._get_current_object(),
                 "account_id": account.id,
@@ -714,104 +714,6 @@ class AppService(BaseService):
         )
 
         return messages, paginator
-
-    def _save_agent_thoughts(
-        self,
-        flask_app: Flask,
-        account_id: uuid.UUID,
-        app_id: uuid.UUID,
-        draft_app_config: dict[str, Any],
-        conversation_id: uuid.UUID,
-        message_id: uuid.UUID,
-        agent_thoughts: dict[str, Any],
-    ) -> None:
-        """存储智能体推理步骤信息"""
-        with flask_app.app_context():
-            # 1.定义变量存储推理位置及总耗时
-            position = 0
-            latency = 0
-
-            # 2.在子线程中重新查询conversation以及message，确保对象会被子线程的会话管理到
-            conversation = self.get(Conversation, conversation_id)
-            message = self.get(Message, message_id)
-
-            # 3.循环遍历所有的智能体推理过程执行存储操作
-            for key, item in agent_thoughts.items():
-                # 4.存储长期记忆召回、推理、消息、动作、知识库检索等步骤
-                if item["event"] in [
-                    QueueEvent.LONG_TERM_MEMORY_RECALL,
-                    QueueEvent.AGENT_THOUGHT,
-                    QueueEvent.AGENT_MESSAGE,
-                    QueueEvent.AGENT_ACTION,
-                    QueueEvent.DATASET_RETRIEVAL,
-                ]:
-                    # 5.更新位置及总耗时
-                    position += 1
-                    latency += item["latency"]
-
-                    # 6.创建智能体消息推理步骤
-                    self.create(
-                        MessageAgentThought,
-                        app_id=app_id,
-                        conversation_id=conversation.id,
-                        message_id=message.id,
-                        invoke_from=InvokeFrom.DEBUGGER,
-                        created_by=account_id,
-                        position=position,
-                        event=item["event"],
-                        thought=item["thought"],
-                        observation=item["observation"],
-                        tool=item["tool"],
-                        tool_input=item["tool_input"],
-                        message=item["message"],
-                        answer=item["answer"],
-                        latency=item["latency"],
-                    )
-
-                # 7.检测事件是否为Agent_message
-                if item["event"] == QueueEvent.AGENT_MESSAGE:
-                    # 8.更新消息信息
-                    self.update(
-                        message,
-                        message=item["message"],
-                        answer=item["answer"],
-                        latency=latency,
-                    )
-
-                    # 9.检测是否开启长期记忆
-                    if draft_app_config["long_term_memory"]["enable"]:
-                        new_summary = self.conversation_service.summary(
-                            message.query, item["answer"], conversation.summary
-                        )
-                        self.update(
-                            conversation,
-                            summary=new_summary,
-                        )
-
-                    # 10.处理生成新会话名称
-                    if conversation.is_new:
-                        new_conversation_name = (
-                            self.conversation_service.generate_conversation_name(
-                                message.query
-                            )
-                        )
-                        self.update(
-                            conversation,
-                            name=new_conversation_name,
-                        )
-
-                # 11.判断是否为停止或者错误，如果是则需要更新消息状态
-                if item["event"] in [QueueEvent.STOP, QueueEvent.ERROR]:
-                    self.update(
-                        message,
-                        status=(
-                            MessageStatus.STOP
-                            if item["event"] == QueueEvent.STOP
-                            else MessageStatus.ERROR
-                        ),
-                        observation=item["observation"],
-                    )
-                    break
 
     def _validate_draft_app_config(
         self, draft_app_config: dict[str, Any], account: Account
