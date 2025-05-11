@@ -40,6 +40,7 @@ from pkg.paginator.paginator import Paginator
 from pkg.sqlalchemy import SQLAlchemy
 from internal.schema.app_schema import (
     CreateAppReq,
+    GetAppsWithPageReq,
     GetDebugConversationMessagesWithPageReq,
     GetPublishHistoriesWithPageReq,
 )
@@ -178,6 +179,25 @@ class AppService(BaseService):
 
         # 8.返回创建好的新应用
         return new_app
+
+    def get_apps_with_page(
+        self, req: GetAppsWithPageReq, account: Account
+    ) -> tuple[list[App], Paginator]:
+        """根据传递的分页参数获取当前登录账号下的应用分页列表数据"""
+        # 1.构建分页器
+        paginator = Paginator(db=self.db, req=req)
+
+        # 2.构建筛选条件
+        filters = [App.account_id == account.id]
+        if req.search_word.data:
+            filters.append(App.name.ilike(f"%{req.search_word.data}%"))
+
+        # 3.执行分页操作
+        apps = paginator.paginate(
+            self.db.session.query(App).filter(*filters).order_by(desc("created_at"))
+        )
+
+        return apps, paginator
 
     def get_draft_app_config(self, app_id: uuid.UUID, account: Account) -> dict:
         """根据传递的应用id获取应用的最新草稿配置"""

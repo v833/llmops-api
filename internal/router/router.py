@@ -48,6 +48,7 @@ class Router:
             methods=["POST", "OPTIONS"],
             view_func=self.app_handler.debug,
         )
+        bp.add_url_rule("/apps", view_func=self.app_handler.get_apps_with_page)
         bp.add_url_rule(
             "/apps", methods=["POST", "OPTIONS"], view_func=self.app_handler.create_app
         )

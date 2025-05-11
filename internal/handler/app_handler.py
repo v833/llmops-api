@@ -14,6 +14,8 @@ from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
 from internal.schema.app_schema import (
     DebugChatReq,
     FallbackHistoryToDraftReq,
+    GetAppsWithPageReq,
+    GetAppsWithPageResp,
     GetDebugConversationMessagesWithPageReq,
     GetDebugConversationMessagesWithPageResp,
     GetPublishHistoriesWithPageReq,
@@ -98,6 +100,22 @@ class AppHandler:
         """根据传递的信息删除指定的应用"""
         self.app_service.delete_app(app_id, current_user)
         return success_message("删除Agent智能体应用成功")
+
+    @login_required
+    def get_apps_with_page(self):
+        """获取当前登录账号的应用分页列表数据"""
+        # 1.提取数据并校验
+        req = GetAppsWithPageReq(request.args)
+        if not req.validate():
+            return validate_error_json(req.errors)
+
+        # 2.调用服务获取列表数据以及分页器
+        apps, paginator = self.app_service.get_apps_with_page(req, current_user)
+
+        # 3.构建响应结构并返回
+        resp = GetAppsWithPageResp(many=True)
+
+        return success_json(PageModel(list=resp.dump(apps), paginator=paginator))
 
     @login_required
     def get_draft_app_config(self, app_id: UUID):
