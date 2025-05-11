@@ -277,12 +277,111 @@ class AppHandler:
         from internal.core.workflow import Workflow
         from internal.core.workflow.entites.workflow_entity import WorkflowConfig
 
+        nodes = [
+            {
+                "id": "18d938c4-ecd7-4a6b-9403-3625224b96cc",
+                "node_type": "start",
+                "title": "开始",
+                "description": "工作流的起点节点，支持定义工作流的起点输入等信息。",
+                "inputs": [
+                    {
+                        "name": "query",
+                        "type": "string",
+                        "description": "用户输入的query信息",
+                        "required": True,
+                        "value": {
+                            "type": "generated",
+                            "content": "",
+                        },
+                    },
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "description": "需要查询的城市地址信息",
+                        "required": False,
+                        "value": {
+                            "type": "generated",
+                            "content": "",
+                        },
+                    },
+                ],
+            },
+            {
+                "id": "860c8411-37ed-4872-b53f-30afa0290211",
+                "node_type": "end",
+                "title": "结束",
+                "description": "工作流的结束节点，支持定义工作流最终输出的变量等信息。",
+                "outputs": [
+                    {
+                        "name": "query",
+                        "type": "string",
+                        "value": {
+                            "type": "ref",
+                            "content": {
+                                "ref_node_id": "18d938c4-ecd7-4a6b-9403-3625224b96cc",
+                                "ref_var_name": "query",
+                            },
+                        },
+                    },
+                    {
+                        "name": "location",
+                        "type": "string",
+                        "value": {
+                            "type": "ref",
+                            "content": {
+                                "ref_node_id": "18d938c4-ecd7-4a6b-9403-3625224b96cc",
+                                "ref_var_name": "location",
+                            },
+                        },
+                    },
+                    {
+                        "name": "username",
+                        "type": "string",
+                        "value": {
+                            "type": "literal",
+                            "content": "wq",
+                        },
+                    },
+                ],
+            },
+        ]
+        edges = [
+            # 并行线路1
+            {
+                "id": "675fca50-1228-8008-82dc-0c714158534c",
+                "source": "18d938c4-ecd7-4a6b-9403-3625224b96cc",
+                "source_type": "start",
+                "target": "860c8411-37ed-4872-b53f-30afa0290211",
+                "target_type": "end",
+            },
+        ]
+
         workflow = Workflow(
             WorkflowConfig(
                 name="test",
                 description="test",
-                nodes=[],
-                edges=[],
+                nodes=nodes,
+                edges=edges,
             )
         )
-        return success_message(workflow.invoke({"query": "hello"}))
+
+        result = workflow.invoke(
+            {
+                "query": "hello",
+                "location": "shanghai",
+            }
+        )
+
+        return success_json(
+            {
+                **result,
+                "info": {
+                    "name": workflow.name,
+                    "description": workflow.description,
+                    "args_schema": workflow.args_schema.model_json_schema(),
+                },
+                "node_reuslts": [
+                    node_result.dict() for node_result in result["node_results"]
+                ],
+            }
+        )

@@ -22,6 +22,7 @@ class BaseNodeData(BaseModel):
     id: UUID
     title: str = ""
     description: str = ""
+    node_type: NodeType
 
 
 class NodeStatus(str, Enum):
