@@ -275,7 +275,7 @@ class AppHandler:
 
     def ping(self):
         from internal.core.workflow import Workflow
-        from internal.core.workflow.entites.workflow_entity import WorkflowConfig
+        from internal.core.workflow.entities.workflow_entity import WorkflowConfig
 
         nodes = [
             {
@@ -358,6 +358,7 @@ class AppHandler:
 
         workflow = Workflow(
             WorkflowConfig(
+                account_id=current_user.id,
                 name="test",
                 description="test",
                 nodes=nodes,
@@ -378,6 +379,10 @@ class AppHandler:
                 "info": {
                     "name": workflow.name,
                     "description": workflow.description,
+                    "args_schema": workflow.args_schema.model_json_schema(),
                 },
+                "node_results": [
+                    node_result.dict() for node_result in result["node_results"]
+                ],
             }
         )
