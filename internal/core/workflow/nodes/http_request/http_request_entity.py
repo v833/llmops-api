@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from pydantic import Field, field_validator, HttpUrl
+from pydantic import Field, field_validator, HttpUrl, validator
 
 from internal.core.workflow.entities.node_entity import BaseNodeData
 from internal.core.workflow.entities.variable_entity import (
@@ -49,11 +49,11 @@ class HttpRequestNodeData(BaseNodeData):
         ],
     )
 
-    @field_validator("url", pre=True, always=True)
+    @validator("url", pre=True, always=True)
     def validate_url(cls, url: Optional[HttpUrl]):
         return url if url != "" else None
 
-    @field_validator("outputs", pre=True)
+    @validator("outputs", pre=True)
     def validate_outputs(cls, outputs: list[VariableEntity]):
         return [
             VariableEntity(

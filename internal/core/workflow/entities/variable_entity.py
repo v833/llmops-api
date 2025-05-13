@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Union, Any, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field, field_validator, validator
 
 from internal.exception import ValidateErrorException
 
@@ -60,7 +60,7 @@ class VariableEntity(BaseModel):
             ref_node_id: Optional[UUID] = None
             ref_var_name: str = ""
 
-            @field_validator("ref_node_id", pre=True, always=True)
+            @validator("ref_node_id", pre=True, always=True)
             def validate_ref_node_id(cls, ref_node_id: Optional[UUID]):
                 return ref_node_id if ref_node_id != "" else None
 
