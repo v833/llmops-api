@@ -1,0 +1,22 @@
+- name: openai
+  label: OpenAI
+  description: OpenAI提供的模型，例如GPT-4o-mini和GPT-4o。
+  icon: icon.svg
+  background: '#E5E7EB'
+  supported_model_types:
+    - chat
+    - completion
+- name: tongyi
+  label: 通义千问
+  description: 通义千问提供的模型，例如千问-max、千问-plus等。
+  icon: icon.png
+  background: '#FFFFFF'
+  supported_model_types:
+    - chat
+- name: ollama
+  label: Ollama
+  description: Ollama提供的本地离线大语言模型，例如qwen2.5-7b等。
+  icon: icon.svg
+  background: '#F9FAFB'
+  supported_model_types:
+    - chat
