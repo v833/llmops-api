@@ -2,7 +2,7 @@ import os.path
 from typing import Union, Type, Any, Optional
 
 import yaml
-from langchain_core.pydantic_v1 import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field, root_validator
 
 from internal.exception import FailException, NotFoundException
 from internal.lib.helper import dynamic_import
@@ -36,7 +36,11 @@ class Provider(BaseModel):
         default_factory=dict
     )  # 模型类映射
 
-    @root_validator(pre=False)
+    class Config:
+        # 字段允许接收任意类型，且不需要校验器
+        arbitrary_types_allowed = True
+
+    @root_validator(pre=False, skip_on_failure=True)
     def validate_provider(cls, provider: dict[str, Any]) -> dict[str, Any]:
         """服务提供者校验器，利用校验器完成该服务提供者的实体与类实例化"""
         # 1.获取服务提供商实体
@@ -44,10 +48,11 @@ class Provider(BaseModel):
 
         # 2.动态导入服务提供商的模型类
         for model_type in provider_entity.supported_model_types:
+            model_type_name = model_type.value
             # 3.将类型的第一个字符转换成大写，其他不变，并构建类映射
-            symbol_name = model_type[0].upper() + model_type[1:]
-            provider["model_class_map"][model_type] = dynamic_import(
-                f"internal.core.language_model.providers.{provider_entity.name}.{model_type}",
+            symbol_name = model_type_name[0].upper() + model_type_name[1:]
+            provider["model_class_map"][model_type_name] = dynamic_import(
+                f"internal.core.language_model.providers.{provider_entity.name}.{model_type_name}",
                 symbol_name,
             )
 

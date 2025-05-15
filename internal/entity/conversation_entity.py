@@ -97,6 +97,7 @@ class InvokeFrom(str, Enum):
     SERVICE_API = "service_api"  # 开放api服务调用
     WEB_APP = "web_app"  # web应用
     DEBUGGER = "debugger"  # 调试页面
+    ASSISTANT_AGENT = "assistant_agent"
 
 
 class MessageStatus(str, Enum):

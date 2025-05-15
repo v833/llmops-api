@@ -3,7 +3,7 @@ from typing import Any, Optional, Type
 
 import yaml
 from injector import inject, singleton
-from langchain_core.pydantic_v1 import BaseModel, Field, root_validator
+from pydantic import BaseModel, Field, root_validator, ConfigDict
 
 from internal.exception import NotFoundException
 from .entities.model_entity import ModelType, BaseLanguageModel
@@ -15,9 +15,11 @@ from .entities.provider_entity import Provider, ProviderEntity
 class LanguageModelManager(BaseModel):
     """语言模型管理器"""
 
+    model_config = ConfigDict(arbitrary_types_allowed=True)
+
     provider_map: dict[str, Provider] = Field(default_factory=dict)  # 服务提供者映射
 
-    @root_validator(pre=False)
+    @root_validator(pre=False, skip_on_failure=True)
     def validate_language_model_manager(cls, values: dict[str, Any]) -> dict[str, Any]:
         """使用pydantic提供的预设规则校验提供者映射，完成语言模型管理器的初始化"""
         # 1.获取当前类所在的路径
