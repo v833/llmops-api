@@ -16,6 +16,7 @@ from internal.handler.api_key_handler import ApiKeyHandler
 from internal.handler.openapi_handler import OpenAPIHandler
 from internal.handler.builtin_app_handler import BuiltinAppHandler
 from internal.handler.workflow_handler import WorkflowHandler
+from internal.handler.language_model_handler import LanguageModelHandler
 
 
 @inject
@@ -38,6 +39,7 @@ class Router:
     openapi_handler: OpenAPIHandler
     builtin_app_handler: BuiltinAppHandler
     workflow_handler: WorkflowHandler
+    language_model_handler: LanguageModelHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -444,6 +446,20 @@ class Router:
             "/workflows/<uuid:workflow_id>/cancel-publish",
             methods=["POST"],
             view_func=self.workflow_handler.cancel_publish_workflow,
+        )
+
+        # 语言模型模块
+        bp.add_url_rule(
+            "/language-models",
+            view_func=self.language_model_handler.get_language_models,
+        )
+        bp.add_url_rule(
+            "/language-models/<string:provider_name>/icon",
+            view_func=self.language_model_handler.get_language_model_icon,
+        )
+        bp.add_url_rule(
+            "/language-models/<string:provider_name>/<string:model_name>",
+            view_func=self.language_model_handler.get_language_model,
         )
 
         # 在应用上去注册蓝图
