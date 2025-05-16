@@ -31,7 +31,7 @@ class LLMNode(BaseNode):
 
         # todo:3.根据配置创建LLM实例，等待多LLM接入时需要完善
         llm = ChatOpenAI(
-            model=self.node_data.language_model_config.get("model", "gpt-4o-mini"),
+            model=self.node_data.language_model_config.get("model", "grok-3-beta"),
             **self.node_data.language_model_config.get("parameters", {}),
         )
 
