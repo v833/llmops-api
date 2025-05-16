@@ -17,6 +17,7 @@ from internal.handler.openapi_handler import OpenAPIHandler
 from internal.handler.builtin_app_handler import BuiltinAppHandler
 from internal.handler.workflow_handler import WorkflowHandler
 from internal.handler.language_model_handler import LanguageModelHandler
+from internal.handler.assistant_agent_handler import AssistantAgentHandler
 
 
 @inject
@@ -40,6 +41,7 @@ class Router:
     builtin_app_handler: BuiltinAppHandler
     workflow_handler: WorkflowHandler
     language_model_handler: LanguageModelHandler
+    assistant_agent_handler: AssistantAgentHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -460,6 +462,27 @@ class Router:
         bp.add_url_rule(
             "/language-models/<string:provider_name>/<string:model_name>",
             view_func=self.language_model_handler.get_language_model,
+        )
+
+        # 辅助Agent模块
+        bp.add_url_rule(
+            "/assistant-agent/chat",
+            methods=["POST"],
+            view_func=self.assistant_agent_handler.assistant_agent_chat,
+        )
+        bp.add_url_rule(
+            "/assistant-agent/chat/<uuid:task_id>/stop",
+            methods=["POST"],
+            view_func=self.assistant_agent_handler.stop_assistant_agent_chat,
+        )
+        bp.add_url_rule(
+            "/assistant-agent/messages",
+            view_func=self.assistant_agent_handler.get_assistant_agent_messages_with_page,
+        )
+        bp.add_url_rule(
+            "/assistant-agent/delete-conversation",
+            methods=["POST"],
+            view_func=self.assistant_agent_handler.delete_assistant_agent_conversation,
         )
 
         # 在应用上去注册蓝图

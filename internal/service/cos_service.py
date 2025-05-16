@@ -13,7 +13,7 @@ from internal.entity.upload_file_entity import (
     ALLOWED_IMAGE_EXTENSION,
 )
 from internal.exception.exception import FailException
-from internal.service import UploadFileService
+from internal.service.upload_file_service import UploadFileService
 from internal.model import Account
 
 
