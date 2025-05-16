@@ -1,63 +1,70 @@
+import io
 import json
-from threading import Thread
-import uuid
 from dataclasses import dataclass
-from typing import Any, Generator, List
 from datetime import datetime
+from threading import Thread
+from typing import Any, Generator
+from uuid import UUID
+
+import requests
+from flask import current_app
 from injector import inject
-from flask import Flask, current_app, request
+from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
+from langchain_core.messages import HumanMessage
+from langchain_core.output_parsers import StrOutputParser
+from langchain_core.prompts import ChatPromptTemplate
+from langchain_core.runnables import RunnableParallel
 from langchain_openai import ChatOpenAI
 from redis import Redis
-import requests
-from sqlalchemy import desc, func
-from langchain_core.messages import HumanMessage
+from sqlalchemy import func, desc, text
+from werkzeug.datastructures import FileStorage
+
+from internal.core.agent.agents import FunctionCallAgent
 from internal.core.agent.agents.agent_queue_manager import AgentQueueManager
-from internal.core.agent.agents.function_call_agent import FunctionCallAgent
 from internal.core.agent.entities.agent_entity import AgentConfig
 from internal.core.agent.entities.queue_entity import QueueEvent
-from internal.core.memory.token_buffer_memory import TokenBufferMemory
-from internal.core.tools.api_tools.entites.tool_entity import ToolEntity
-from internal.core.tools.api_tools.providers.api_provider_manager import (
-    ApiProviderManager,
-)
+from internal.core.language_model import LanguageModelManager
+from internal.core.memory import TokenBufferMemory
+from internal.core.tools.api_tools.providers import ApiProviderManager
 from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
 from internal.entity.ai_entity import OPTIMIZE_PROMPT_TEMPLATE
+from internal.entity.app_entity import AppStatus, AppConfigType, DEFAULT_APP_CONFIG
+from internal.entity.app_entity import GENERATE_ICON_PROMPT_TEMPLATE
 from internal.entity.conversation_entity import InvokeFrom, MessageStatus
 from internal.entity.dataset_entity import RetrievalSource
-from internal.exception.exception import (
-    FailException,
-    ForbiddenException,
+from internal.exception import (
     NotFoundException,
+    ForbiddenException,
     ValidateErrorException,
+    FailException,
 )
-from internal.lib.helper import datetime_to_timestamp, remove_fields
-from internal.model.api_tool import ApiTool
-from internal.model.app import AppConfig, AppDatasetJoin
-from internal.model.conversation import Conversation, MessageAgentThought
-from internal.model.dataset import Dataset
-from internal.service.base_service import BaseService
-from internal.service.conversation_service import ConversationService
-from internal.service.retrieval_service import RetrievalService
-from pkg.paginator.paginator import Paginator
-from pkg.sqlalchemy import SQLAlchemy
+from internal.lib.helper import remove_fields, get_value_type
+from internal.model import (
+    App,
+    Account,
+    AppConfigVersion,
+    ApiTool,
+    Dataset,
+    AppConfig,
+    AppDatasetJoin,
+    Conversation,
+    Message,
+)
 from internal.schema.app_schema import (
     CreateAppReq,
     GetAppsWithPageReq,
-    GetDebugConversationMessagesWithPageReq,
     GetPublishHistoriesWithPageReq,
+    GetDebugConversationMessagesWithPageReq,
 )
-from internal.model import App, Account, AppConfigVersion, Message
-
-from internal.entity.app_entity import AppStatus, AppConfigType, DEFAULT_APP_CONFIG
+from pkg.paginator import Paginator
+from pkg.sqlalchemy import SQLAlchemy
 from .app_config_service import AppConfigService
-from internal.service.cos_service import CosService
-from internal.entity.app_entity import GENERATE_ICON_PROMPT_TEMPLATE
-from langchain_core.output_parsers import StrOutputParser
-from langchain_core.prompts import ChatPromptTemplate
-from langchain_community.utilities.dalle_image_generator import DallEAPIWrapper
-from langchain_core.runnables import RunnableParallel
-from werkzeug.datastructures import FileStorage
-import io
+from .base_service import BaseService
+from .conversation_service import ConversationService
+from .cos_service import CosService
+from .language_model_service import LanguageModelService
+from .retrieval_service import RetrievalService
+from ..core.language_model.entities.model_entity import ModelParameterType, ModelFeature
 
 
 @inject
@@ -70,16 +77,16 @@ class AppService(BaseService):
     cos_service: CosService
     conversation_service: ConversationService
     retrieval_service: RetrievalService
+    app_config_service: AppConfigService
+    language_model_service: LanguageModelService
     api_provider_manager: ApiProviderManager
     builtin_provider_manager: BuiltinProviderManager
-    app_config_service: AppConfigService
+    language_model_manager: LanguageModelManager
 
-    def auto_create_app(
-        self, name: str, description: str, account_id: uuid.UUID
-    ) -> None:
+    def auto_create_app(self, name: str, description: str, account_id: UUID) -> None:
         """根据传递的应用名称、描述、账号id利用AI创建一个Agent智能体"""
         # 1.创建LLM，用于生成icon提示与预设提示词
-        llm = ChatOpenAI(model="grok-3-beta", temperature=0.8)
+        llm = ChatOpenAI(model="gpt-4o-mini", temperature=0.8)
 
         # 2.创建DallEApiWrapper包装器
         dalle_api_wrapper = DallEAPIWrapper(model="dall-e-3", size="1024x1024")
@@ -158,30 +165,25 @@ class AppService(BaseService):
             app.draft_app_config_id = app_config_version.id
 
     def create_app(self, req: CreateAppReq, account: Account) -> App:
+        """创建Agent应用服务"""
+        # 1.开启数据库自动提交上下文
         with self.db.auto_commit():
-            # 1.创建模型的实体类
+            # 2.创建应用记录，并刷新数据，从而可以拿到应用id
             app = App(
-                id=uuid.uuid4(),
                 account_id=account.id,
                 name=req.name.data,
                 icon=req.icon.data,
                 description=req.description.data,
                 status=AppStatus.DRAFT,
-                updated_at=datetime.utcnow(),
-                created_at=datetime.utcnow(),
             )
-            # 2.将实体类添加到session会话中
             self.db.session.add(app)
             self.db.session.flush()
 
             # 3.添加草稿记录
             app_config_version = AppConfigVersion(
-                id=uuid.uuid4(),
                 app_id=app.id,
                 version=0,
                 config_type=AppConfigType.DRAFT,
-                updated_at=datetime.utcnow(),
-                created_at=datetime.utcnow(),
                 **DEFAULT_APP_CONFIG,
             )
             self.db.session.add(app_config_version)
@@ -193,7 +195,7 @@ class AppService(BaseService):
         # 5.返回创建的应用记录
         return app
 
-    def get_app(self, app_id: uuid.UUID, account: Account) -> App:
+    def get_app(self, app_id: UUID, account: Account) -> App:
         """根据传递的id获取应用的基础信息"""
         # 1.查询数据库获取应用基础信息
         app = self.get(App, app_id)
@@ -208,19 +210,19 @@ class AppService(BaseService):
 
         return app
 
-    def delete_app(self, app_id: uuid.UUID, account: Account) -> App:
+    def delete_app(self, app_id: UUID, account: Account) -> App:
         """根据传递的应用id+账号，删除指定的应用信息，目前仅删除应用基础信息即可"""
         app = self.get_app(app_id, account)
         self.delete(app)
         return app
 
-    def update_app(self, app_id: uuid.UUID, account: Account, **kwargs) -> App:
+    def update_app(self, app_id: UUID, account: Account, **kwargs) -> App:
         """根据传递的应用id+账号+信息，更新指定的应用"""
         app = self.get_app(app_id, account)
         self.update(app, **kwargs)
         return app
 
-    def copy_app(self, app_id: uuid.UUID, account: Account) -> App:
+    def copy_app(self, app_id: UUID, account: Account) -> App:
         """根据传递的应用id，拷贝Agent相关信息并创建一个新Agent"""
         # 1.获取App+草稿配置，并校验权限
         app = self.get_app(app_id, account)
@@ -251,16 +253,6 @@ class AppService(BaseService):
         ]
         remove_fields(app_dict, app_remove_fields)
         remove_fields(draft_app_config_dict, draft_app_config_remove_fields)
-
-        current_time = datetime.utcnow()
-
-        app_dict["id"] = uuid.uuid4()
-        app_dict["updated_at"] = current_time
-        app_dict["created_at"] = current_time
-
-        draft_app_config_dict["id"] = uuid.uuid4()
-        draft_app_config_dict["updated_at"] = current_time
-        draft_app_config_dict["created_at"] = current_time
 
         # 4.开启数据库自动提交上下文
         with self.db.auto_commit():
@@ -303,16 +295,14 @@ class AppService(BaseService):
 
         return apps, paginator
 
-    def get_draft_app_config(self, app_id: uuid.UUID, account: Account) -> dict:
-        """根据传递的应用id获取应用的最新草稿配置"""
-
+    def get_draft_app_config(self, app_id: UUID, account: Account) -> dict[str, Any]:
+        """根据传递的应用id，获取指定的应用草稿配置信息"""
         app = self.get_app(app_id, account)
-
         return self.app_config_service.get_draft_app_config(app)
 
     def update_draft_app_config(
         self,
-        app_id: uuid.UUID,
+        app_id: UUID,
         draft_app_config: dict[str, Any],
         account: Account,
     ) -> AppConfigVersion:
@@ -334,7 +324,7 @@ class AppService(BaseService):
 
         return draft_app_config_record
 
-    def publish_draft_app_config(self, app_id: uuid.UUID, account: Account) -> App:
+    def publish_draft_app_config(self, app_id: UUID, account: Account) -> App:
         """根据传递的应用id+账号，发布/更新指定的应用草稿配置为运行时配置"""
         # 1.获取应用的信息以及草稿信息
         app = self.get_app(app_id, account)
@@ -383,16 +373,17 @@ class AppService(BaseService):
 
         # 6.获取应用草稿记录，并移除id、version、config_type、updated_at、created_at字段
         draft_app_config_copy = app.draft_app_config.__dict__.copy()
-        remove_fields = [
-            "id",
-            "version",
-            "config_type",
-            "updated_at",
-            "created_at",
-            "_sa_instance_state",
-        ]
-        for field in remove_fields:
-            draft_app_config_copy.pop(field)
+        remove_fields(
+            draft_app_config_copy,
+            [
+                "id",
+                "version",
+                "config_type",
+                "updated_at",
+                "created_at",
+                "_sa_instance_state",
+            ],
+        )
 
         # 7.获取当前最大的发布版本
         max_version = (
@@ -414,7 +405,7 @@ class AppService(BaseService):
 
         return app
 
-    def cancel_publish_app_config(self, app_id: uuid.UUID, account: Account) -> App:
+    def cancel_publish_app_config(self, app_id: UUID, account: Account) -> App:
         """根据传递的应用id+账号，取消发布指定的应用配置"""
         # 1.获取应用信息并校验权限
         app = self.get_app(app_id, account)
@@ -435,7 +426,7 @@ class AppService(BaseService):
         return app
 
     def get_publish_histories_with_page(
-        self, app_id: uuid.UUID, req: GetPublishHistoriesWithPageReq, account: Account
+        self, app_id: UUID, req: GetPublishHistoriesWithPageReq, account: Account
     ) -> tuple[list[AppConfigVersion], Paginator]:
         """根据传递的应用id+请求数据，获取指定应用的发布历史配置列表信息"""
         # 1.获取应用信息并校验权限
@@ -458,8 +449,8 @@ class AppService(BaseService):
 
     def fallback_history_to_draft(
         self,
-        app_id: uuid.UUID,
-        app_config_version_id: uuid.UUID,
+        app_id: UUID,
+        app_config_version_id: UUID,
         account: Account,
     ) -> AppConfigVersion:
         """根据传递的应用id、历史配置版本id、账号信息，回退特定配置到草稿"""
@@ -473,17 +464,18 @@ class AppService(BaseService):
 
         # 3.校验历史版本配置信息（剔除已删除的工具、知识库、工作流）
         draft_app_config_dict = app_config_version.__dict__.copy()
-        remove_fields = [
-            "id",
-            "app_id",
-            "version",
-            "config_type",
-            "updated_at",
-            "created_at",
-            "_sa_instance_state",
-        ]
-        for field in remove_fields:
-            draft_app_config_dict.pop(field)
+        remove_fields(
+            draft_app_config_dict,
+            [
+                "id",
+                "app_id",
+                "version",
+                "config_type",
+                "updated_at",
+                "created_at",
+                "_sa_instance_state",
+            ],
+        )
 
         # 4.校验历史版本配置信息
         draft_app_config_dict = self._validate_draft_app_config(
@@ -501,9 +493,7 @@ class AppService(BaseService):
 
         return draft_app_config_record
 
-    def get_debug_conversation_summary(
-        self, app_id: uuid.UUID, account: Account
-    ) -> str:
+    def get_debug_conversation_summary(self, app_id: UUID, account: Account) -> str:
         """根据传递的应用id+账号获取指定应用的调试会话长期记忆"""
         # 1.获取应用信息并校验权限
         app = self.get_app(app_id, account)
@@ -516,7 +506,7 @@ class AppService(BaseService):
         return app.debug_conversation.summary
 
     def update_debug_conversation_summary(
-        self, app_id: uuid.UUID, summary: str, account: Account
+        self, app_id: UUID, summary: str, account: Account
     ) -> Conversation:
         """根据传递的应用id+总结更新指定应用的调试长期记忆"""
         # 1.获取应用信息并校验权限
@@ -533,7 +523,7 @@ class AppService(BaseService):
 
         return debug_conversation
 
-    def delete_debug_conversation(self, app_id: uuid.UUID, account: Account) -> App:
+    def delete_debug_conversation(self, app_id: UUID, account: Account) -> App:
         """根据传递的应用id，删除指定的应用调试会话"""
         # 1.获取应用信息并校验权限
         app = self.get_app(app_id, account)
@@ -547,7 +537,7 @@ class AppService(BaseService):
 
         return app
 
-    def debug_chat(self, app_id: uuid.UUID, query: str, account: Account) -> Generator:
+    def debug_chat(self, app_id: UUID, query: str, account: Account) -> Generator:
         """根据传递的应用id+提问query向特定的应用发起会话调试"""
         # 1.获取应用信息并校验权限
         app = self.get_app(app_id, account)
@@ -569,12 +559,12 @@ class AppService(BaseService):
             status=MessageStatus.NORMAL,
         )
 
-        # todo:5.根据传递的model_config实例化不同的LLM模型，等待多LLM接入后该处会发生变化
-        llm = ChatOpenAI(
-            model=draft_app_config["model_config"]["model"],
-            **draft_app_config["model_config"]["parameters"],
+        # 5.从语言模型管理器中加载大语言模型
+        llm = self.language_model_service.load_language_model(
+            draft_app_config.get("model_config", {})
         )
-        # 6.实例化TokenBufferMemory用于提取短期记忆``
+
+        # 6.实例化TokenBufferMemory用于提取短期记忆
         token_buffer_memory = TokenBufferMemory(
             db=self.db,
             conversation=debug_conversation,
@@ -585,14 +575,13 @@ class AppService(BaseService):
         )
 
         # 7.将草稿配置中的tools转换成LangChain工具
-        tools = []
         tools = self.app_config_service.get_langchain_tools_by_tools_config(
             draft_app_config["tools"]
         )
 
-        # 11.检测是否关联了知识库
+        # 8.检测是否关联了知识库
         if draft_app_config["datasets"]:
-            # 12.构建LangChain知识库检索工具
+            # 9.构建LangChain知识库检索工具
             dataset_retrieval = (
                 self.retrieval_service.create_langchain_tool_from_search(
                     flask_app=current_app._get_current_object(),
@@ -606,12 +595,16 @@ class AppService(BaseService):
             )
             tools.append(dataset_retrieval)
 
-        # todo:13.构建Agent智能体，目前暂时使用FunctionCallAgent
-        agent = FunctionCallAgent(
+        # 10.根据LLM是否支持tool_call决定使用不同的Agent
+        agent_class = (
+            FunctionCallAgent if ModelFeature.TOOL_CALL in llm.features else ReACTAgent
+        )
+        agent = agent_class(
             llm=llm,
             agent_config=AgentConfig(
                 user_id=account.id,
                 invoke_from=InvokeFrom.DEBUGGER,
+                preset_prompt=draft_app_config["preset_prompt"],
                 enable_long_term_memory=draft_app_config["long_term_memory"]["enable"],
                 tools=tools,
                 review_config=draft_app_config["review_config"],
@@ -626,18 +619,18 @@ class AppService(BaseService):
                 "long_term_memory": debug_conversation.summary,
             }
         ):
-            # 15.提取thought以及answer
+            # 11.提取thought以及answer
             event_id = str(agent_thought.id)
 
-            # 17.将数据填充到agent_thought，便于存储到数据库服务中
+            # 12.将数据填充到agent_thought，便于存储到数据库服务中
             if agent_thought.event != QueueEvent.PING:
-                # 18.除了agent_message数据为叠加，其他均为覆盖
+                # 13.除了agent_message数据为叠加，其他均为覆盖
                 if agent_thought.event == QueueEvent.AGENT_MESSAGE:
                     if event_id not in agent_thoughts:
-                        # 19.初始化智能体消息事件
+                        # 14.初始化智能体消息事件
                         agent_thoughts[event_id] = agent_thought
                     else:
-                        # 20.叠加智能体消息
+                        # 15.叠加智能体消息
                         agent_thoughts[event_id] = agent_thoughts[event_id].model_copy(
                             update={
                                 "thought": agent_thoughts[event_id].thought
@@ -648,9 +641,8 @@ class AppService(BaseService):
                             }
                         )
                 else:
-                    # 21.处理其他类型事件的消息
+                    # 16.处理其他类型事件的消息
                     agent_thoughts[event_id] = agent_thought
-
             data = {
                 **agent_thought.model_dump(
                     include={
@@ -680,14 +672,14 @@ class AppService(BaseService):
                 "app_config": draft_app_config,
                 "conversation_id": debug_conversation.id,
                 "message_id": message.id,
-                "agent_thoughts": agent_thoughts,
+                "agent_thoughts": [
+                    agent_thought for agent_thought in agent_thoughts.values()
+                ],
             },
         )
         thread.start()
 
-    def stop_debug_chat(
-        self, app_id: uuid.UUID, task_id: uuid.UUID, account: Account
-    ) -> None:
+    def stop_debug_chat(self, app_id: UUID, task_id: UUID, account: Account) -> None:
         """根据传递的应用id+任务id+账号，停止某个应用的调试会话，中断流式事件"""
         # 1.获取应用信息并校验权限
         self.get_app(app_id, account)
@@ -697,7 +689,7 @@ class AppService(BaseService):
 
     def get_debug_conversation_messages_with_page(
         self,
-        app_id: uuid.UUID,
+        app_id: UUID,
         req: GetDebugConversationMessagesWithPageReq,
         account: Account,
     ) -> tuple[list[Message], Paginator]:
@@ -760,7 +752,78 @@ class AppService(BaseService):
         ):
             raise ValidateErrorException("草稿配置字段出错，请核实后重试")
 
-        # todo:3.校验model_config字段，等待多LLM接入时完成该步骤校验
+        # 3.校验model_config字段，provider/model使用严格校验(出错的时候直接抛出)，parameters使用宽松校验，出错时使用默认值
+        if "model_config" in draft_app_config:
+            # 3.1 获取模型配置并判断数据是否为字典
+            model_config = draft_app_config["model_config"]
+            if not isinstance(model_config, dict):
+                raise ValidateErrorException("模型配置格式错误，请核实后重试")
+
+            # 3.2 判断model_config键信息是否正确
+            if set(model_config.keys()) != {"provider", "model", "parameters"}:
+                raise ValidateErrorException("模型键配置格式错误，请核实后重试")
+
+            # 3.3 判断模型提供者信息是否正确
+            if not model_config["provider"] or not isinstance(
+                model_config["provider"], str
+            ):
+                raise ValidateErrorException("模型服务提供商类型必须为字符串")
+            provider = self.language_model_manager.get_provider(
+                model_config["provider"]
+            )
+            if not provider:
+                raise ValidateErrorException("该模型服务提供商不存在，请核实后重试")
+
+            # 3.4 判断模型信息是否正确
+            if not model_config["model"] or not isinstance(model_config["model"], str):
+                raise ValidateErrorException("模型名字必须是否字符串")
+            model_entity = provider.get_model_entity(model_config["model"])
+            if not model_entity:
+                raise ValidateErrorException("该服务提供商下不存在该模型，请核实后重试")
+
+            # 3.5 判断传递的parameters是否正确，如果不正确则设置默认值，并剔除多余字段，补全未传递的字段
+            parameters = {}
+            for parameter in model_entity.parameters:
+                # 3.6 从model_config中获取参数值，如果不存在则设置为默认值
+                parameter_value = model_config["parameters"].get(
+                    parameter.name, parameter.default
+                )
+
+                # 3.7 判断参数是否必填
+                if parameter.required:
+                    # 3.8 参数必填，则值不允许为None，如果为None则设置默认值
+                    if parameter_value is None:
+                        parameter_value = parameter.default
+                    else:
+                        # 3.9 值非空则校验数据类型是否正确，不正确则设置默认值
+                        if get_value_type(parameter_value) != parameter.type.value:
+                            parameter_value = parameter.default
+                else:
+                    # 3.10 参数非必填，数据非空的情况下需要校验
+                    if parameter_value is not None:
+                        if get_value_type(parameter_value) != parameter.type.value:
+                            parameter_value = parameter.default
+
+                # 3.11 判断参数是否存在options，如果存在则数值必须在options中选择
+                if parameter.options and parameter_value not in parameter.options:
+                    parameter_value = parameter.default
+
+                # 3.12 参数类型为int/float，如果存在min/max时候需要校验
+                if (
+                    parameter.type in [ModelParameterType.INT, ModelParameterType.FLOAT]
+                    and parameter_value is not None
+                ):
+                    # 3.13 校验数值的min/max
+                    if (parameter.min and parameter_value < parameter.min) or (
+                        parameter.max and parameter_value > parameter.max
+                    ):
+                        parameter_value = parameter.default
+
+                parameters[parameter.name] = parameter_value
+
+            # 3.13 覆盖Agent配置中的模型配置
+            model_config["parameters"] = parameters
+            draft_app_config["model_config"] = model_config
 
         # 4.校验dialog_round上下文轮数，校验数据类型以及范围
         if "dialog_round" in draft_app_config:
@@ -858,7 +921,7 @@ class AppService(BaseService):
             # 8.3 循环校验知识库的每个参数
             for dataset_id in datasets:
                 try:
-                    uuid.UUID(dataset_id)
+                    UUID(dataset_id)
                 except Exception as e:
                     raise ValidateErrorException("知识库列表参数必须是UUID")
             # 8.4 判断是否传递了重复的知识库

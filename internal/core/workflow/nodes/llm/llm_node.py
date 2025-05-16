@@ -29,10 +29,13 @@ class LLMNode(BaseNode):
         template = Template(self.node_data.prompt)
         prompt_value = template.render(**inputs_dict)
 
-        # todo:3.根据配置创建LLM实例，等待多LLM接入时需要完善
-        llm = ChatOpenAI(
-            model=self.node_data.language_model_config.get("model", "grok-3-beta"),
-            **self.node_data.language_model_config.get("parameters", {}),
+        # 3.根据配置创建LLM实例，等待多LLM接入时需要完善
+        from internal.extension.module_extension import injector
+        from internal.service import LanguageModelService
+
+        language_model_service = injector.get(LanguageModelService)
+        llm = language_model_service.load_language_model(
+            self.node_data.language_model_config
         )
 
         # 4.使用stream来代替invoke，避免接口长时间未响应超时
