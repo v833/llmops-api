@@ -21,6 +21,7 @@ from werkzeug.datastructures import FileStorage
 
 from internal.core.agent.agents import FunctionCallAgent
 from internal.core.agent.agents.agent_queue_manager import AgentQueueManager
+from internal.core.agent.agents.react_agent import ReACTAgent
 from internal.core.agent.entities.agent_entity import AgentConfig
 from internal.core.agent.entities.queue_entity import QueueEvent
 from internal.core.language_model import LanguageModelManager

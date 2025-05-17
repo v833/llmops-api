@@ -32,6 +32,7 @@ class AppConfigService(BaseService):
     db: SQLAlchemy
     api_provider_manager: ApiProviderManager
     builtin_provider_manager: BuiltinProviderManager
+    language_model_manager: LanguageModelManager
 
     def get_draft_app_config(self, app: App) -> dict[str, Any]:
         """根据传递的应用获取该应用的草稿配置"""
