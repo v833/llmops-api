@@ -1,15 +1,18 @@
 from dataclasses import dataclass
 from typing import Any, Union
+from uuid import UUID
 
 from flask import request
 from injector import inject
 from langchain_core.tools import BaseTool
-
+from internal.core.workflow import Workflow as WorkflowTool
 from internal.core.language_model import LanguageModelManager
 from internal.core.tools.api_tools.entites import ToolEntity
 from internal.core.tools.api_tools.providers import ApiProviderManager
 from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
+from internal.core.workflow.entities.workflow_entity import WorkflowConfig
 from internal.entity.app_entity import DEFAULT_APP_CONFIG
+from internal.entity.workflow_entity import WorkflowStatus
 from internal.lib.helper import datetime_to_timestamp, get_value_type
 from internal.model import (
     App,
@@ -19,6 +22,7 @@ from internal.model import (
     AppConfigVersion,
     AppDatasetJoin,
 )
+from internal.model.workflow import Workflow
 from pkg.sqlalchemy import SQLAlchemy
 from .base_service import BaseService
 from ..core.language_model.entities.model_entity import ModelParameterType
@@ -63,10 +67,14 @@ class AppConfigService(BaseService):
         if set(validate_datasets) != set(draft_app_config.datasets):
             self.update(draft_app_config, datasets=validate_datasets)
 
-        # todo:7.校验工作流列表对应的数据
-        workflows = []
+        # 7.校验工作流列表对应的数据
+        workflows, validate_workflows = self._process_and_validate_workflows(
+            draft_app_config.workflows
+        )
+        if set(validate_workflows) != set(draft_app_config.workflows):
+            self.update(draft_app_config, workflows=validate_workflows)
 
-        # 20.将数据转换成字典后返回
+        # 将数据转换成字典后返回
         return self._process_and_transformer_app_config(
             tools, workflows, datasets, draft_app_config
         )
@@ -107,10 +115,14 @@ class AppConfigService(BaseService):
                     AppDatasetJoin.dataset_id == dataset_id
                 ).delete()
 
-        # todo:7.校验工作流列表对应的数据
-        workflows = []
+        # 7.校验工作流列表对应的数据
+        workflows, validate_workflows = self._process_and_validate_workflows(
+            app_config.workflows
+        )
+        if set(validate_workflows) != set(app_config.workflows):
+            self.update(app_config, workflows=validate_workflows)
 
-        # 20.将数据转换成字典后返回
+        # 8.将数据转换成字典后返回
         return self._process_and_transformer_app_config(
             tools, workflows, datasets, app_config
         )
@@ -151,6 +163,40 @@ class AppConfigService(BaseService):
                 )
 
         return tools
+
+    def get_langchain_tools_by_workflow_ids(
+        self, workflow_ids: list[UUID]
+    ) -> list[BaseTool]:
+        """根据传递的工作流配置列表获取langchain工具列表"""
+        # 1.根据传递的工作流id查询工作流记录信息
+        workflow_records = (
+            self.db.session.query(Workflow)
+            .filter(
+                Workflow.id.in_(workflow_ids),
+                Workflow.status == WorkflowStatus.PUBLISHED,
+            )
+            .all()
+        )
+
+        # 2.循环遍历所有工作流记录列表
+        workflows = []
+        for workflow_record in workflow_records:
+            try:
+                # 3.创建工作流工具
+                workflow_tool = WorkflowTool(
+                    workflow_config=WorkflowConfig(
+                        account_id=workflow_record.account_id,
+                        name=f"wf_{workflow_record.tool_call_name}",
+                        description=workflow_record.description,
+                        nodes=workflow_record.graph.get("nodes", []),
+                        edges=workflow_record.graph.get("edges", []),
+                    )
+                )
+                workflows.append(workflow_tool)
+            except Exception:
+                continue
+
+        return workflows
 
     @classmethod
     def _process_and_transformer_app_config(
@@ -391,3 +437,44 @@ class AppConfigService(BaseService):
         model_config["parameters"] = parameters
 
         return model_config
+
+    def _process_and_validate_workflows(
+        self, origin_workflows: list[UUID]
+    ) -> tuple[list[dict], list[UUID]]:
+        """根据传递的工作流列表并返回工作流配置和校验后的数据"""
+        # 1.校验工作流配置列表，如果引用了不存在/被删除的工作流，则需要提出数据并更新，同时获取工作流的额外信息
+        workflows = []
+        workflow_records = (
+            self.db.session.query(Workflow)
+            .filter(
+                Workflow.id.in_(origin_workflows),
+                Workflow.status == WorkflowStatus.PUBLISHED,
+            )
+            .all()
+        )
+        workflow_dict = {
+            str(workflow_record.id): workflow_record
+            for workflow_record in workflow_records
+        }
+        workflow_sets = set(workflow_dict.keys())
+
+        # 2.计算存在的工作流id列表，为了保留原始顺序，使用列表循环的方式来判断
+        validate_workflows = [
+            workflow_id
+            for workflow_id in origin_workflows
+            if workflow_id in workflow_sets
+        ]
+
+        # 3.循环获取工作流数据
+        for workflow_id in validate_workflows:
+            workflow = workflow_dict.get(str(workflow_id))
+            workflows.append(
+                {
+                    "id": str(workflow.id),
+                    "name": workflow.name,
+                    "icon": workflow.icon,
+                    "description": workflow.description,
+                }
+            )
+
+        return workflows, validate_workflows

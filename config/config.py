@@ -34,3 +34,5 @@ class Config:
                 "CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP"
             ),
         }
+
+        self.ASSISTANT_AGENT_ID = os.getenv("ASSISTANT_AGENT_ID")

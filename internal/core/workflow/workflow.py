@@ -176,7 +176,8 @@ class Workflow(BaseTool):
 
     def _run(self, *args: Any, **kwargs: Any) -> Any:
         """工作流组件基础run方法"""
-        return self._workflow.invoke({"inputs": kwargs})
+        result = self._workflow.invoke({"inputs": kwargs})
+        return result.get("outputs", {})
 
     def stream(
         self,
