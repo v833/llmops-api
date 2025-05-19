@@ -26,6 +26,7 @@ from .builtin_app_service import BuiltinAppService
 from .workflow_service import WorkflowService
 from .language_model_service import LanguageModelService
 from .assistant_agent_service import AssistantAgentService
+from .web_app_service import WebAppService
 
 __all__ = [
     "BuiltinToolService",
@@ -56,4 +57,5 @@ __all__ = [
     "WorkflowService",
     "LanguageModelService",
     "AssistantAgentService",
+    "WebAppService",
 ]

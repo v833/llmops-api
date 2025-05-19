@@ -273,6 +273,18 @@ class AppHandler:
         """应用会话调试聊天接口，该接口为流式事件输出"""
         pass
 
+    @login_required
+    def get_published_config(self, app_id: UUID):
+        """根据传递的应用id获取应用的发布配置信息"""
+        published_config = self.app_service.get_published_config(app_id, current_user)
+        return success_json(published_config)
+
+    @login_required
+    def regenerate_web_app_token(self, app_id: UUID):
+        """根据传递的应用id重新生成WebApp凭证标识"""
+        token = self.app_service.regenerate_web_app_token(app_id, current_user)
+        return success_json({"token": token})
+
     def ping(self):
         from internal.core.workflow import Workflow
         from internal.core.workflow.entities.workflow_entity import WorkflowConfig

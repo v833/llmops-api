@@ -15,6 +15,7 @@ from internal.handler.ai_handler import AIHandler
 from internal.handler.api_key_handler import ApiKeyHandler
 from internal.handler.openapi_handler import OpenAPIHandler
 from internal.handler.builtin_app_handler import BuiltinAppHandler
+from internal.handler.web_app_handler import WebAppHandler
 from internal.handler.workflow_handler import WorkflowHandler
 from internal.handler.language_model_handler import LanguageModelHandler
 from internal.handler.assistant_agent_handler import AssistantAgentHandler
@@ -42,6 +43,7 @@ class Router:
     workflow_handler: WorkflowHandler
     language_model_handler: LanguageModelHandler
     assistant_agent_handler: AssistantAgentHandler
+    web_app_handler: WebAppHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -139,6 +141,16 @@ class Router:
         bp.add_url_rule(
             "/apps/<uuid:app_id>/conversations/messages",
             view_func=self.app_handler.get_debug_conversation_messages_with_page,
+        )
+
+        bp.add_url_rule(
+            "/apps/<uuid:app_id>/published-config",
+            view_func=self.app_handler.get_published_config,
+        )
+        bp.add_url_rule(
+            "/apps/<uuid:app_id>/published-config/regenerate-web-app-token",
+            methods=["POST"],
+            view_func=self.app_handler.regenerate_web_app_token,
         )
 
         # 内置插件广场
@@ -483,6 +495,25 @@ class Router:
             "/assistant-agent/delete-conversation",
             methods=["POST"],
             view_func=self.assistant_agent_handler.delete_assistant_agent_conversation,
+        )
+
+        # WebApp模块
+        bp.add_url_rule(
+            "/web-apps/<string:token>", view_func=self.web_app_handler.get_web_app
+        )
+        bp.add_url_rule(
+            "/web-apps/<string:token>/chat",
+            methods=["POST"],
+            view_func=self.web_app_handler.web_app_chat,
+        )
+        bp.add_url_rule(
+            "/web-apps/<string:token>/chat/<uuid:task_id>/stop",
+            methods=["POST"],
+            view_func=self.web_app_handler.stop_web_app_chat,
+        )
+        bp.add_url_rule(
+            "/web-apps/<string:token>/conversations",
+            view_func=self.web_app_handler.get_conversations,
         )
 
         # 在应用上去注册蓝图
