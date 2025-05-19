@@ -136,6 +136,14 @@ class OpenAPIService(BaseService):
             )
             tools.append(dataset_retrieval)
 
+        if app_config["workflows"]:
+            workflow_tools = (
+                self.app_config_service.get_langchain_tools_by_workflow_ids(
+                    [workflow["id"] for workflow in app_config["workflows"]]
+                )
+            )
+            tools.extend(workflow_tools)
+
         # 14.根据LLM是否支持tool_call决定使用不同的Agent
         agent_class = (
             FunctionCallAgent if ModelFeature.TOOL_CALL in llm.features else ReACTAgent

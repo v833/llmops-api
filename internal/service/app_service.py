@@ -349,8 +349,7 @@ class AppService(BaseService):
                 }
                 for tool in draft_app_config["tools"]
             ],
-            # todo:工作流模块完成后该处可能有变动
-            workflows=draft_app_config["workflows"],
+            workflows=[workflow["id"] for workflow in draft_app_config["workflows"]],
             retrieval_config=draft_app_config["retrieval_config"],
             long_term_memory=draft_app_config["long_term_memory"],
             opening_statement=draft_app_config["opening_statement"],
@@ -597,6 +596,14 @@ class AppService(BaseService):
                 )
             )
             tools.append(dataset_retrieval)
+
+        if draft_app_config["workflows"]:
+            workflow_tools = (
+                self.app_config_service.get_langchain_tools_by_workflow_ids(
+                    [workflow["id"] for workflow in draft_app_config["workflows"]]
+                )
+            )
+            tools.extend(workflow_tools)
 
         # 10.根据LLM是否支持tool_call决定使用不同的Agent
         agent_class = (
