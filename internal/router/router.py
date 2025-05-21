@@ -17,6 +17,7 @@ from internal.handler.openapi_handler import OpenAPIHandler
 from internal.handler.builtin_app_handler import BuiltinAppHandler
 from internal.handler.web_app_handler import WebAppHandler
 from internal.handler.workflow_handler import WorkflowHandler
+from internal.handler.conversation_handler import ConversationHandler
 from internal.handler.language_model_handler import LanguageModelHandler
 from internal.handler.assistant_agent_handler import AssistantAgentHandler
 
@@ -44,6 +45,7 @@ class Router:
     language_model_handler: LanguageModelHandler
     assistant_agent_handler: AssistantAgentHandler
     web_app_handler: WebAppHandler
+    conversation_handler: ConversationHandler
 
     def register_router(self, app: Flask):
         """注册路由"""
@@ -514,6 +516,36 @@ class Router:
         bp.add_url_rule(
             "/web-apps/<string:token>/conversations",
             view_func=self.web_app_handler.get_conversations,
+        )
+
+        # 会话模块
+        bp.add_url_rule(
+            "/conversations/<uuid:conversation_id>/messages",
+            view_func=self.conversation_handler.get_conversation_messages_with_page,
+        )
+        bp.add_url_rule(
+            "/conversations/<uuid:conversation_id>/delete",
+            methods=["POST"],
+            view_func=self.conversation_handler.delete_conversation,
+        )
+        bp.add_url_rule(
+            "/conversations/<uuid:conversation_id>/messages/<uuid:message_id>/delete",
+            methods=["POST"],
+            view_func=self.conversation_handler.delete_message,
+        )
+        bp.add_url_rule(
+            "/conversations/<uuid:conversation_id>/name",
+            view_func=self.conversation_handler.get_conversation_name,
+        )
+        bp.add_url_rule(
+            "/conversations/<uuid:conversation_id>/name",
+            methods=["POST"],
+            view_func=self.conversation_handler.update_conversation_name,
+        )
+        bp.add_url_rule(
+            "/conversations/<uuid:conversation_id>/is-pinned",
+            methods=["POST"],
+            view_func=self.conversation_handler.update_conversation_is_pinned,
         )
 
         # 在应用上去注册蓝图
