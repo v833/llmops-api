@@ -1,4 +1,13 @@
-from sqlalchemy import Column, UUID, String, Text, DateTime, PrimaryKeyConstraint, text
+from sqlalchemy import (
+    Column,
+    UUID,
+    String,
+    Text,
+    DateTime,
+    PrimaryKeyConstraint,
+    text,
+    Index,
+)
 from sqlalchemy.dialects.postgresql import JSONB
 
 from internal.extension.database_extension import db
@@ -8,8 +17,11 @@ class ApiToolProvider(db.Model):
     """API工具提供者模型"""
 
     __tablename__ = "api_tool_provider"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_api_tool_provider_id"),)
-
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_api_tool_provider_id"),
+        Index("api_tool_provider_account_id_idx", "account_id"),
+        Index("api_tool_name_idx", "name"),
+    )
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     account_id = Column(UUID, nullable=False)
     name = Column(
@@ -40,8 +52,11 @@ class ApiTool(db.Model):
     """API工具表"""
 
     __tablename__ = "api_tool"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_api_tool_id"),)
-
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_api_tool_id"),
+        Index("api_tool_account_id_idx", "account_id"),
+        Index("api_tool_provider_id_name_idx", "provider_id", "name"),
+    )
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     account_id = Column(UUID, nullable=False)
     provider_id = Column(UUID, nullable=False)

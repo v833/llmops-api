@@ -9,6 +9,7 @@ from sqlalchemy import (
     PrimaryKeyConstraint,
     text,
     func,
+    Index,
 )
 from sqlalchemy.dialects.postgresql import JSONB
 
@@ -21,8 +22,10 @@ class Dataset(db.Model):
     """知识库表"""
 
     __tablename__ = "dataset"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_dataset_id"),)
-
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_dataset_id"),
+        Index("dataset_account_id_name_idx", "account_id", "name"),
+    )
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     account_id = Column(UUID, nullable=False)
     name = Column(
@@ -83,7 +86,12 @@ class Document(db.Model):
     """文档表模型"""
 
     __tablename__ = "document"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_document_id"),)
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_document_id"),
+        Index("document_account_id_idx", "account_id"),
+        Index("document_dataset_id_idx", "dataset_id"),
+        Index("document_batch_idx", "batch"),
+    )
 
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     account_id = Column(UUID, nullable=False)
@@ -166,8 +174,12 @@ class Segment(db.Model):
     """片段表模型"""
 
     __tablename__ = "segment"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_segment_id"),)
-
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_segment_id"),
+        Index("segment_account_id_idx", "account_id"),
+        Index("segment_dataset_id_idx", "dataset_id"),
+        Index("segment_document_id_idx", "document_id"),
+    )
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     account_id = Column(UUID, nullable=False)
     dataset_id = Column(UUID, nullable=False)
@@ -211,8 +223,10 @@ class KeywordTable(db.Model):
     """关键词表模型"""
 
     __tablename__ = "keyword_table"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_keyword_table_id"),)
-
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_keyword_table_id"),
+        Index("keyword_table_dataset_id_idx", "dataset_id"),
+    )
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     dataset_id = Column(UUID, nullable=False)
     keyword_table = Column(JSONB, nullable=False, server_default=text("'{}'::jsonb"))
@@ -231,8 +245,12 @@ class DatasetQuery(db.Model):
     """知识库查询表模型"""
 
     __tablename__ = "dataset_query"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_dataset_query_id"),)
-
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_dataset_query_id"),
+        Index("dataset_query_dataset_id_idx", "dataset_id"),
+        Index("dataset_created_by_idx", "created_by"),
+        Index("dataset_source_app_id_idx", "source_app_id"),
+    )
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     dataset_id = Column(UUID, nullable=False)
     query = Column(Text, nullable=False, server_default=text("''::text"))
@@ -258,8 +276,11 @@ class ProcessRule(db.Model):
     """文档处理规则表模型"""
 
     __tablename__ = "process_rule"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_process_rule_id"),)
-
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_process_rule_id"),
+        Index("process_rule_account_id_idx", "account_id"),
+        Index("process_rule_dataset_id_idx", "dataset_id"),
+    )
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     account_id = Column(UUID, nullable=False)
     dataset_id = Column(UUID, nullable=False)

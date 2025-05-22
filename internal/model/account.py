@@ -7,6 +7,7 @@ from sqlalchemy import (
     DateTime,
     text,
     PrimaryKeyConstraint,
+    Index,
 )
 
 from internal.extension.database_extension import db
@@ -18,7 +19,10 @@ class Account(UserMixin, db.Model):
     """账号模型"""
 
     __tablename__ = "account"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_account_id"),)
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_account_id"),
+        Index("account_email_idx", "email"),
+    )
 
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     name = Column(
@@ -93,7 +97,11 @@ class AccountOAuth(db.Model):
     """账号与第三方授权认证记录表"""
 
     __tablename__ = "account_oauth"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_account_oauth_id"),)
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_account_oauth_id"),
+        Index("account_oauth_account_id_idx", "account_id"),
+        Index("account_oauth_openid_provider_idx", "provider"),
+    )
 
     id = Column(UUID, nullable=False, server_default=text("uuid_generate_v4()"))
     account_id = Column(UUID, nullable=False)

@@ -6,6 +6,7 @@ from sqlalchemy import (
     Boolean,
     text,
     PrimaryKeyConstraint,
+    Index,
 )
 
 from internal.extension.database_extension import db
@@ -16,7 +17,11 @@ class ApiKey(db.Model):
     """API秘钥模型"""
 
     __tablename__ = "api_key"
-    __table_args__ = (PrimaryKeyConstraint("id", name="pk_api_key_id"),)
+    __table_args__ = (
+        PrimaryKeyConstraint("id", name="pk_api_key_id"),
+        Index("api_key_account_id_idx", "account_id"),
+        Index("api_key_api_key_idx", "api_key"),
+    )
 
     id = Column(
         UUID, nullable=False, server_default=text("uuid_generate_v4()")
