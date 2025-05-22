@@ -13,6 +13,7 @@ from flask_migrate import Migrate
 from flask_cors import CORS
 from flask_login import LoginManager
 from internal.middleware import Middleware
+from flask_weaviate import FlaskWeaviate
 
 
 class Http(Flask):
@@ -21,6 +22,7 @@ class Http(Flask):
         *args,
         config: Config,
         db: SQLAlchemy,
+        weaviate: FlaskWeaviate,
         migrate: Migrate,
         login_manager: LoginManager,
         middleware: Middleware,
@@ -35,6 +37,8 @@ class Http(Flask):
         self.register_error_handler(Exception, self._register_error_handler)
 
         db.init_app(self)
+
+        weaviate.init_app(self)
 
         # with self.app_context():
         # db.drop_all()

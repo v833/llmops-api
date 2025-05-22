@@ -34,5 +34,11 @@ class Config:
                 "CELERY_BROKER_CONNECTION_RETRY_ON_STARTUP"
             ),
         }
+        # Weaviate向量数据库配置
+        self.WEAVIATE_HTTP_HOST = os.getenv("WEAVIATE_HTTP_HOST")
+        self.WEAVIATE_HTTP_PORT = os.getenv("WEAVIATE_HTTP_PORT")
+        self.WEAVIATE_GRPC_HOST = os.getenv("WEAVIATE_GRPC_HOST")
+        self.WEAVIATE_GRPC_PORT = os.getenv("WEAVIATE_GRPC_PORT")
+        self.WEAVIATE_API_KEY = os.getenv("WEAVIATE_API_KEY")
 
         self.ASSISTANT_AGENT_ID = os.getenv("ASSISTANT_AGENT_ID")

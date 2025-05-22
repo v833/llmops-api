@@ -6,6 +6,8 @@ from flask_migrate import Migrate
 from redis import Redis
 from flask_login import LoginManager
 from internal.extension.login_extension import login_manager
+from flask_weaviate import FlaskWeaviate
+from internal.extension.weaviate_extension import weaviate
 
 
 class ExtensionModule(Module):
@@ -16,6 +18,10 @@ class ExtensionModule(Module):
         binder.bind(Migrate, to=migrate)
         binder.bind(Redis, to=redis_client)
         binder.bind(LoginManager, to=login_manager)
+        binder.bind(
+            FlaskWeaviate,
+            to=weaviate,
+        )
 
 
 injector = Injector([ExtensionModule])
