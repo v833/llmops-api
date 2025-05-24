@@ -1,7 +1,7 @@
 from langchain_openai import ChatOpenAI
 from langgraph.graph import StateGraph, START, END, MessagesState
 from langchain_core.tools import tool
-from pydantic import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field
 from langgraph.prebuilt import ToolNode
 from typing import Literal
 from langgraph.checkpoint.memory import MemorySaver

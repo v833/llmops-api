@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Union, Any, Optional
 from uuid import UUID
 
-from pydantic import BaseModel, Field, field_validator, validator
+from langchain_core.pydantic_v1 import BaseModel, Field, validator, validator
 
 from internal.exception import ValidateErrorException
 
@@ -76,7 +76,7 @@ class VariableEntity(BaseModel):
     )  # 变量对应的值
     meta: dict[str, Any] = Field(default_factory=dict)  # 变量元数据，存储一些额外的信息
 
-    @field_validator("name")
+    @validator("name")
     def validate_name(cls, value: str) -> str:
         """自定义校验函数，用于校验变量名字"""
         if not re.match(VARIABLE_NAME_PATTERN, value):
@@ -85,7 +85,7 @@ class VariableEntity(BaseModel):
             )
         return value
 
-    @field_validator("description")
+    @validator("description")
     def validate_description(cls, value: str) -> str:
         """自定义校验函数，用于校验描述信息，截取前1024个字符"""
         return value[:VARIABLE_DESCRIPTION_MAX_LENGTH]

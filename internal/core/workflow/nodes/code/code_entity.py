@@ -1,4 +1,4 @@
-from pydantic import Field
+from langchain_core.pydantic_v1 import Field
 
 from internal.core.workflow.entities.node_entity import BaseNodeData
 from internal.core.workflow.entities.variable_entity import VariableEntity

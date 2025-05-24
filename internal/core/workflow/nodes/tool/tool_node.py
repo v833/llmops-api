@@ -2,7 +2,7 @@ import json
 import time
 from typing import Optional, Any
 
-from pydantic import PrivateAttr
+from langchain_core.pydantic_v1 import PrivateAttr
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import BaseTool
 

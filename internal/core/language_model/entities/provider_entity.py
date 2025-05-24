@@ -2,7 +2,7 @@ import os.path
 from typing import Union, Type, Any, Optional
 
 import yaml
-from pydantic import BaseModel, Field, root_validator
+from langchain_core.pydantic_v1 import BaseModel, Field, root_validator
 
 from internal.exception import FailException, NotFoundException
 from internal.lib.helper import dynamic_import

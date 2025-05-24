@@ -8,6 +8,15 @@ from flask_login import LoginManager
 from internal.middleware import Middleware
 from flask_weaviate import FlaskWeaviate
 import dotenv
+import os
+
+if os.environ.get("FLASK_DEBUG") == "0" or os.environ.get("FLASK_ENV") == "production":
+    from gevent import monkey
+
+    monkey.patch_all()
+    import grpc.experimental.gevent
+
+    grpc.experimental.gevent.init_gevent()
 
 dotenv.load_dotenv()
 app = Http(

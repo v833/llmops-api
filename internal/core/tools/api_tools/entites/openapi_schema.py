@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field, field_validator
+from langchain_core.pydantic_v1 import BaseModel, Field, validator
 from enum import Enum
 from internal.exception.exception import ValidateErrorException
 
@@ -43,19 +43,19 @@ class OpenAPISchema(BaseModel):
         description="工具提供者的路径参数字典",
     )
 
-    @field_validator("server", mode="before")
+    @validator("server")
     def validate_server(cls, server: str):
         if server is None or server == "":
             raise ValidateErrorException("server不能为空")
         return server
 
-    @field_validator("description", mode="before")
+    @validator("description")
     def validate_description(cls, description: str):
         if description is None or description == "":
             raise ValidateErrorException("description不能为空")
         return description
 
-    @field_validator("paths", mode="before")
+    @validator("paths")
     def validate_paths(cls, paths: dict[str, dict]) -> dict[str, dict]:
         """校验paths信息，涵盖：方法提取、operationId唯一标识，parameters校验"""
         # 1.paths不能为空且类型为字典

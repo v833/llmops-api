@@ -1,7 +1,7 @@
 from injector import inject, singleton
 from typing import Any, List
 import os
-from pydantic import Field
+from langchain_core.pydantic_v1 import Field
 import yaml
 
 from internal.core.tools.builtin_tools.entities.provider_entity import (

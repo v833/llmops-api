@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Optional
 
-from pydantic import Field, field_validator, HttpUrl, validator
+from langchain_core.pydantic_v1 import Field, validator, HttpUrl, validator
 
 from internal.core.workflow.entities.node_entity import BaseNodeData
 from internal.core.workflow.entities.variable_entity import (
@@ -64,7 +64,7 @@ class HttpRequestNodeData(BaseNodeData):
             VariableEntity(name="text", value={"type": VariableValueType.GENERATED}),
         ]
 
-    @field_validator("inputs")
+    @validator("inputs")
     def validate_inputs(cls, inputs: list[VariableEntity]):
         """校验输入列表数据"""
         # 1.校验判断输入变量列表中的类型信息

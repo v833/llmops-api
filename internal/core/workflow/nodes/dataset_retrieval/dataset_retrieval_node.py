@@ -3,7 +3,7 @@ from typing import Optional, Any
 from uuid import UUID
 
 from flask import Flask
-from pydantic import PrivateAttr
+from langchain_core.pydantic_v1 import PrivateAttr
 from langchain_core.runnables import RunnableConfig
 from langchain_core.tools import BaseTool
 

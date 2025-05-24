@@ -2,7 +2,7 @@ import os
 
 import yaml
 from injector import inject, singleton
-from pydantic import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 from internal.core.builtin_apps.entities.builtin_app_entity import BuiltinAppEntity
 from internal.core.builtin_apps.entities.category_entity import CategoryEntity

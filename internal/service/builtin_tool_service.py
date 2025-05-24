@@ -5,7 +5,7 @@ from flask import current_app
 from injector import inject
 from internal.core.tools.builtin_tools.providers import BuiltinProviderManager
 from internal.core.tools.builtin_tools.categories import BuiltinCategoryManager
-from pydantic import BaseModel
+from langchain_core.pydantic_v1 import BaseModel
 from internal.exception import NotFoundException
 from typing import Any
 

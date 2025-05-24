@@ -1,6 +1,6 @@
 import os
 from typing import Any
-from pydantic import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field
 import yaml
 
 from internal.core.tools.builtin_tools.entities.tool_entity import ToolEntity

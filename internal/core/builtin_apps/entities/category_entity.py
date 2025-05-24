@@ -1,4 +1,4 @@
-from pydantic import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 
 class CategoryEntity(BaseModel):

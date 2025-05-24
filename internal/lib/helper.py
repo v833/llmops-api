@@ -7,7 +7,7 @@ from datetime import datetime
 from hashlib import sha3_256
 from uuid import UUID
 from langchain_core.documents import Document
-from pydantic import BaseModel
+from langchain_core.pydantic_v1 import BaseModel
 
 
 def dynamic_import(module_name: str, symbol_name: str) -> Any:

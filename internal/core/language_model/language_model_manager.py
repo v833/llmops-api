@@ -3,7 +3,7 @@ from typing import Any, Optional, Type
 
 import yaml
 from injector import inject, singleton
-from pydantic import BaseModel, Field, root_validator, ConfigDict
+from langchain_core.pydantic_v1 import BaseModel, Field, root_validator, ConfigDict
 
 from internal.exception import NotFoundException
 from .entities.model_entity import ModelType, BaseLanguageModel

@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 from injector import inject
-from pydantic import BaseModel, create_model, Field
+from langchain_core.pydantic_v1 import BaseModel, create_model, Field
 from langchain.tools import BaseTool, StructuredTool
 from internal.core.tools.api_tools.entites.openapi_schema import (
     ParameterTypeMap,

@@ -3,7 +3,7 @@ from collections import defaultdict, deque
 from typing import Any, TypedDict, Annotated
 from uuid import UUID
 
-from pydantic import BaseModel, Field, model_validator, root_validator
+from langchain_core.pydantic_v1 import BaseModel, Field, root_validator
 
 from internal.exception import ValidateErrorException
 from .edge_entity import BaseEdgeData

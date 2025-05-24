@@ -3,7 +3,7 @@ from enum import Enum
 from typing import Any, Optional
 
 from langchain_core.language_models import BaseLanguageModel as LCBaseLanguageModel
-from pydantic import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field
 
 
 class DefaultModelParameterName(str, Enum):

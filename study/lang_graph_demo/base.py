@@ -4,7 +4,7 @@ from langgraph.graph.message import add_messages
 from typing import TypedDict, Annotated, Literal
 from langchain_core.messages import ToolMessage
 from langchain_core.tools import tool
-from pydantic import BaseModel, Field
+from langchain_core.pydantic_v1 import BaseModel, Field
 import json
 import dotenv
 
