@@ -24,12 +24,12 @@ class BuiltinToolService:
         builtin_tools = []
         for provider in providers:
             provider_entity = provider.provider_entity
-            builtin_tool = {**provider_entity.model_dump(exclude=["icon"]), "tools": []}
+            builtin_tool = {**provider_entity.dict(exclude=["icon"]), "tools": []}
 
             for tool_entity in provider.get_tool_entities():
                 tool = provider.get_tool(tool_entity.name)
                 tool_dict = {
-                    **tool_entity.model_dump(),
+                    **tool_entity.dict(),
                     "inputs": self.get_tool_inputs(tool),
                 }
                 builtin_tool["tools"].append(tool_dict)
@@ -55,8 +55,8 @@ class BuiltinToolService:
         tool = provider.get_tool(tool_name)
 
         builtin_tool = {
-            "provider": {**provider_entity.model_dump(exclude=["icon", "created_at"])},
-            **tool_entity.model_dump(),
+            "provider": {**provider_entity.dict(exclude=["icon", "created_at"])},
+            **tool_entity.dict(),
             "created_at": provider_entity.created_at,
             "inputs": self.get_tool_inputs(tool),
         }

@@ -15,7 +15,7 @@ class GetBuiltinAppCategoriesResp(Schema):
 
     @pre_dump
     def process_data(self, data: CategoryEntity, **kwargs):
-        return data.model_dump()
+        return data.dict()
 
 
 class GetBuiltinAppsResp(Schema):
@@ -32,7 +32,7 @@ class GetBuiltinAppsResp(Schema):
     @pre_dump
     def process_data(self, data: BuiltinAppEntity, **kwargs):
         return {
-            **data.model_dump(
+            **data.dict(
                 include={"id", "category", "name", "icon", "description", "created_at"}
             ),
             "model_config": {

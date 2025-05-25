@@ -67,7 +67,7 @@ class BaseAgent(Serializable, Runnable):
                     if event_id not in agent_thoughts:
                         agent_thoughts[event_id] = agent_thought
                     else:
-                        agent_thoughts[event_id] = agent_thoughts[event_id].model_copy(
+                        agent_thoughts[event_id] = agent_thoughts[event_id].copy(
                             update={
                                 "thought": agent_thoughts[event_id].thought
                                 + agent_thought.thought,

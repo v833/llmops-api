@@ -47,7 +47,7 @@ class BuiltinAppService(BaseService):
                 updated_at=datetime.utcnow(),
                 created_at=datetime.utcnow(),
                 status=AppStatus.DRAFT,
-                **builtin_app.model_dump(include={"name", "icon", "description"})
+                **builtin_app.dict(include={"name", "icon", "description"})
             )
             self.db.session.add(app)
             self.db.session.flush()
@@ -60,7 +60,7 @@ class BuiltinAppService(BaseService):
                 created_at=datetime.utcnow(),
                 model_config=builtin_app.language_model_config,
                 config_type=AppConfigType.DRAFT,
-                **builtin_app.model_dump(
+                **builtin_app.dict(
                     include={
                         "dialog_round",
                         "preset_prompt",

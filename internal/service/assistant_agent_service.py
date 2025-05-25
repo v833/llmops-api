@@ -111,7 +111,7 @@ class AssistantAgentService(BaseService):
                         agent_thoughts[event_id] = agent_thought
                     else:
                         # 12.叠加智能体消息
-                        agent_thoughts[event_id] = agent_thoughts[event_id].model_copy(
+                        agent_thoughts[event_id] = agent_thoughts[event_id].copy(
                             update={
                                 "thought": agent_thoughts[event_id].thought
                                 + agent_thought.thought,
@@ -124,7 +124,7 @@ class AssistantAgentService(BaseService):
                     # 13.处理其他类型事件的消息
                     agent_thoughts[event_id] = agent_thought
             data = {
-                **agent_thought.model_dump(
+                **agent_thought.dict(
                     include={
                         "event",
                         "thought",

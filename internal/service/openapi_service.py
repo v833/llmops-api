@@ -188,7 +188,7 @@ class OpenAPIService(BaseService):
                                 # 叠加智能体消息
                                 agent_thoughts_dict[event_id] = agent_thoughts_dict[
                                     event_id
-                                ].model_copy(
+                                ].copy(
                                     update={
                                         "thought": agent_thoughts_dict[event_id].thought
                                         + agent_thought.thought,
@@ -201,7 +201,7 @@ class OpenAPIService(BaseService):
                             # 处理其他类型事件的消息
                             agent_thoughts_dict[event_id] = agent_thought
                     data = {
-                        **agent_thought.model_dump(
+                        **agent_thought.dict(
                             include={
                                 "event",
                                 "thought",
